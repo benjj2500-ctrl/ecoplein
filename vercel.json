@@ -1,7 +1,12 @@
 {
+  "outputDirectory": "public",
   "functions": {
     "api/*.js": {
       "maxDuration": 30
     }
-  }
+  },
+  "rewrites": [
+    { "source": "/api/stations", "destination": "/api/stations.js" },
+    { "source": "/api/brands", "destination": "/api/brands.js" }
+  ]
 }
