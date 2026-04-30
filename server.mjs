@@ -3,6 +3,7 @@ import { promises as fs } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { inflateRawSync } from "node:zlib";
+import { getStationRows } from "./lib/fuel-data.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PORT = Number(process.env.PORT || 5173);
@@ -360,7 +361,7 @@ const server = createServer(async (request, response) => {
   const requestUrl = new URL(request.url, `http://${request.headers.host}`);
 
   try {
-    if (requestUrl.pathname === "/api/fuel.xml") {
+    if (requestUrl.pathname === "/api/fuel" || requestUrl.pathname === "/api/fuel.xml") {
       const force = requestUrl.searchParams.get("fresh") === "1";
       const xml = await readFreshCachedXml(force);
       response.writeHead(200, {
@@ -379,6 +380,27 @@ const server = createServer(async (request, response) => {
         "Cache-Control": "no-store",
       });
       response.end(JSON.stringify({ brands }));
+      return;
+    }
+
+    if (requestUrl.pathname === "/api/stations") {
+      const ids = String(requestUrl.searchParams.get("ids") || "")
+        .split(",")
+        .map((id) => id.trim())
+        .filter(Boolean)
+        .slice(0, 5);
+      const stations = await getStationRows({
+        fuel: requestUrl.searchParams.get("fuel"),
+        latitude: requestUrl.searchParams.get("lat"),
+        longitude: requestUrl.searchParams.get("lon"),
+        ids,
+        force: requestUrl.searchParams.get("fresh") === "1",
+      });
+      response.writeHead(200, {
+        "Content-Type": "application/json; charset=utf-8",
+        "Cache-Control": "no-store",
+      });
+      response.end(JSON.stringify({ stations }));
       return;
     }
 

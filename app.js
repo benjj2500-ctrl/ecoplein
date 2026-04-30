@@ -53,7 +53,6 @@ async function init() {
   syncControlsFromState();
   writeUrlState("replace");
   bindEvents();
-  await loadStations();
   locateUser();
 }
 
@@ -61,14 +60,13 @@ function bindEvents() {
   elements.fuelSelect.addEventListener("change", (event) => {
     state.selectedFuel = event.target.value;
     writeUrlState("push");
-    render();
+    loadStations();
   });
 
   elements.locateButton.addEventListener("click", locateUser);
 
   elements.refreshButton.addEventListener("click", async () => {
     await loadStations(true);
-    render();
   });
 
   elements.sortToggleButtons.forEach((button) => {
@@ -83,7 +81,7 @@ function bindEvents() {
     button.addEventListener("click", () => {
       state.view = button.dataset.view;
       writeUrlState("push");
-      render();
+      loadStations();
     });
   });
 
@@ -93,26 +91,59 @@ function bindEvents() {
     state.sortBy = nextState.sortBy;
     state.sortOrder = nextState.sortOrder;
     state.view = nextState.view;
-    render();
+    loadStations();
   });
 }
 
 async function loadStations(force = false) {
+  if (!state.userPosition) {
+    state.isLoading = false;
+    render();
+    return;
+  }
+
+  if (state.view === "favorites" && state.favorites.length === 0) {
+    state.stations = [];
+    state.isLoading = false;
+    setStatus("Favoris 0/5", "ready");
+    render();
+    return;
+  }
+
   setStatus("Chargement du flux", "");
   state.isLoading = true;
   render();
 
   try {
-    const response = await fetch(`/api/fuel.xml${force ? "?fresh=1" : ""}`);
+    const params = new URLSearchParams({
+      fuel: state.selectedFuel,
+      lat: String(state.userPosition.latitude),
+      lon: String(state.userPosition.longitude),
+    });
+
+    if (state.view === "favorites") {
+      params.set("ids", state.favorites.join(","));
+    }
+    if (force) {
+      params.set("fresh", "1");
+    }
+
+    const response = await fetch(`/api/stations?${params.toString()}`);
     if (!response.ok) {
       const details = await response.json().catch(() => ({}));
       throw new Error(details.error || "Flux impossible à charger");
     }
 
-    const xml = await response.text();
-    state.stations = parseStations(xml);
+    const data = await response.json();
+    state.stations = Array.isArray(data.stations) ? data.stations : [];
     state.isLoading = false;
-    setStatus(`${state.stations.length.toLocaleString("fr-FR")} stations`, "ready");
+    setStatus(
+      `${state.stations.length.toLocaleString("fr-FR")} station${
+        state.stations.length > 1 ? "s" : ""
+      }`,
+      "ready"
+    );
+    render();
   } catch (error) {
     state.isLoading = false;
     setStatus("Flux indisponible", "error");
@@ -142,13 +173,13 @@ function locateUser() {
       };
       elements.locateButton.disabled = false;
       elements.locateButton.innerHTML = '<span aria-hidden="true">◎</span> Me géolocaliser';
-      render();
+      loadStations();
     },
     () => {
       state.userPosition = DEFAULT_POSITION;
       elements.locateButton.disabled = false;
       elements.locateButton.innerHTML = '<span aria-hidden="true">◎</span> Me géolocaliser';
-      render();
+      loadStations();
     },
     { enableHighAccuracy: true, timeout: 9000, maximumAge: 60000 }
   );
@@ -244,7 +275,7 @@ function render() {
 function buildRows() {
   return state.stations
     .map((station) => {
-      const price = station.prices.get(state.selectedFuel);
+      const price = station.price || station.prices?.get(state.selectedFuel);
       if (!price) return null;
       return {
         ...station,
@@ -364,6 +395,10 @@ function toggleFavorite(stationId) {
   }
 
   localStorage.setItem(FAVORITES_KEY, JSON.stringify(state.favorites));
+  if (state.view === "favorites") {
+    loadStations();
+    return;
+  }
   render();
 }
 
