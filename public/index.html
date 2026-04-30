@@ -2,7 +2,7 @@
 <html lang="fr">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>Prix carburants autour de moi</title>
     <link rel="stylesheet" href="/styles.css" />
   </head>
@@ -13,59 +13,41 @@
         <path d="M3.51 15a9 9 0 1 0 .49-3"/>
       </svg>
     </div>
+
+    <header class="topbar">
+      <div class="fuel-pill">
+        <span aria-hidden="true">⛽</span>
+        <select id="fuelSelect" aria-label="Carburant">
+          <option value="Gazole">Gazole</option>
+          <option value="E10">E10</option>
+          <option value="SP95">SP95</option>
+          <option value="SP98">SP98</option>
+          <option value="E85">E85</option>
+          <option value="GPLc">GPLc</option>
+        </select>
+      </div>
+      <div class="status-pill" id="dataStatus">Chargement du flux</div>
+      <button class="geo-btn" type="button" id="locateButton" aria-label="Me géolocaliser">◎</button>
+    </header>
+
     <main class="app-shell">
-      <section class="topbar" aria-label="Recherche carburant">
-        <div>
-          <p class="eyebrow">Open data gouvernemental</p>
-          <h1>Prix carburants autour de moi</h1>
-        </div>
-        <div class="status-pill" id="dataStatus">Chargement du flux</div>
-      </section>
-
-      <section class="controls" aria-label="Paramètres de recherche">
-        <div class="control-block fuel-block">
-          <label for="fuelSelect">Carburant</label>
-          <select id="fuelSelect">
-            <option value="Gazole">Gazole</option>
-            <option value="E10">E10</option>
-            <option value="SP95">SP95</option>
-            <option value="SP98">SP98</option>
-            <option value="E85">E85</option>
-            <option value="GPLc">GPLc</option>
-          </select>
-        </div>
-
-        <div class="control-block">
-          <span>Trier par</span>
-          <div class="sort-controls" role="group" aria-label="Tri">
-            <button class="sort-toggle-button" type="button" data-sort-toggle="distance">
-              <span>Distance</span>
-              <span class="sort-arrow" aria-hidden="true">-</span>
-            </button>
-            <button class="sort-toggle-button" type="button" data-sort-toggle="price">
-              <span>Prix</span>
-              <span class="sort-arrow" aria-hidden="true">-</span>
-            </button>
-          </div>
-        </div>
-
-        <div class="control-block view-block">
-          <span>Vue</span>
-          <nav class="view-tabs" aria-label="Vues">
-            <button class="active" type="button" data-view="nearby">Autour</button>
-            <button type="button" data-view="favorites">Favoris <span id="favoriteCount">0/5</span></button>
-          </nav>
-        </div>
-
-        <button class="locate-button" type="button" id="locateButton">
-          <span aria-hidden="true">◎</span>
-          Me géolocaliser
-        </button>
-      </section>
-
-
       <section class="station-list" id="stationList" aria-label="Stations"></section>
     </main>
+
+    <nav class="tabbar" aria-label="Navigation">
+      <button class="tabitem" type="button" data-view="nearby">
+        <span class="tab-icon" aria-hidden="true">📍</span>
+        <span>Autour</span>
+      </button>
+      <button class="tabitem" type="button" data-view="favorites">
+        <span class="tab-icon" aria-hidden="true">★</span>
+        <span>Favoris <span id="favoriteCount">0/5</span></span>
+      </button>
+      <button class="tabitem" type="button" id="sortTab">
+        <span class="tab-icon" aria-hidden="true">↕</span>
+        <span id="sortTabLabel">Trier</span>
+      </button>
+    </nav>
 
     <template id="stationTemplate">
       <article class="station-card">

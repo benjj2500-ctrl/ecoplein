@@ -1,0 +1,586 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Redesign — Propositions</title>
+  <style>
+    :root {
+      --bg: #f6f7f4;
+      --ink: #1d2623;
+      --muted: #68746f;
+      --line: #d9ded7;
+      --panel: #ffffff;
+      --green: #0f7b63;
+      --green-dark: #0b5f4d;
+      --coral: #d85f47;
+      --shadow: 0 8px 24px rgba(30,42,38,.10);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #e8ebe7;
+      padding: 32px 16px 64px;
+      color: var(--ink);
+    }
+
+    h1.page-title {
+      text-align: center;
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--muted);
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      margin-bottom: 40px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 32px;
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    /* iPhone frame */
+    .phone {
+      background: #1a1a1a;
+      border-radius: 44px;
+      padding: 14px;
+      box-shadow: 0 24px 60px rgba(0,0,0,.35), inset 0 0 0 1px #333;
+      width: 100%;
+      max-width: 340px;
+      margin: 0 auto;
+    }
+    .phone-screen {
+      background: var(--bg);
+      border-radius: 32px;
+      overflow: hidden;
+      position: relative;
+      min-height: 560px;
+    }
+    /* Notch */
+    .phone-screen::before {
+      content: '';
+      display: block;
+      width: 100px;
+      height: 28px;
+      background: #1a1a1a;
+      border-radius: 0 0 18px 18px;
+      margin: 0 auto;
+    }
+
+    .label {
+      text-align: center;
+      margin-top: 16px;
+      font-weight: 800;
+      font-size: .95rem;
+      color: var(--ink);
+    }
+    .label-sub {
+      text-align: center;
+      margin-top: 4px;
+      font-size: .82rem;
+      color: var(--muted);
+      line-height: 1.4;
+      padding: 0 8px;
+    }
+
+    /* ── Shared station card ── */
+    .card {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 12px 14px;
+      box-shadow: var(--shadow);
+    }
+    .card-title { font-weight: 800; font-size: .92rem; }
+    .card-addr  { font-size: .78rem; color: var(--muted); margin-top: 2px; }
+    .chips { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+    .chip {
+      font-size: .76rem; font-weight: 800;
+      padding: 3px 9px; border-radius: 999px;
+      background: #eef2ef; color: var(--muted);
+    }
+    .chip.green { background: rgba(15,123,99,.12); color: var(--green-dark); }
+
+    /* ────────────────────────────────────── */
+    /*  OPTION A — Compact strip             */
+    /* ────────────────────────────────────── */
+    .a-strip {
+      background: rgba(255,255,255,.95);
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      position: sticky;
+      top: 0;
+    }
+    .a-fuel {
+      display: flex; align-items: center; gap: 5px;
+      background: var(--ink); color: #fff;
+      border-radius: 999px; padding: 5px 11px;
+      font-size: .8rem; font-weight: 800;
+    }
+    .a-fuel select {
+      background: transparent; border: none; color: #fff;
+      font: inherit; font-size: .8rem; font-weight: 800;
+      cursor: pointer; outline: none;
+      appearance: none; -webkit-appearance: none;
+    }
+    .a-tabs {
+      display: flex; gap: 4px;
+      background: #eef2ef;
+      border-radius: 999px; padding: 3px;
+      flex: 1;
+    }
+    .a-tab {
+      flex: 1; text-align: center;
+      font-size: .75rem; font-weight: 800;
+      padding: 4px 0;
+      border-radius: 999px;
+      color: var(--muted);
+    }
+    .a-tab.active { background: #fff; color: var(--ink); box-shadow: 0 1px 3px rgba(0,0,0,.12); }
+    .a-pill {
+      font-size: .72rem; font-weight: 700;
+      color: var(--green-dark);
+      background: rgba(15,123,99,.1);
+      border-radius: 999px; padding: 4px 9px;
+      white-space: nowrap;
+    }
+    .a-body { padding: 10px 12px; display: grid; gap: 8px; }
+
+    /* ────────────────────────────────────── */
+    /*  OPTION B — Header collapsible        */
+    /* ────────────────────────────────────── */
+    .b-top {
+      padding: 10px 14px 8px;
+      background: rgba(255,255,255,.95);
+      border-bottom: 1px solid var(--line);
+    }
+    .b-row1 {
+      display: flex; align-items: center;
+      justify-content: space-between; gap: 8px;
+      margin-bottom: 8px;
+    }
+    .b-title { font-size: .95rem; font-weight: 800; }
+    .b-pill {
+      font-size: .72rem; font-weight: 700; color: var(--green-dark);
+      background: rgba(15,123,99,.1);
+      border-radius: 999px; padding: 4px 9px;
+    }
+    .b-row2 { display: flex; gap: 6px; }
+    .b-chip-sel {
+      background: var(--ink); color: #fff;
+      border-radius: 8px; padding: 5px 10px;
+      font-size: .78rem; font-weight: 800;
+      display: flex; align-items: center; gap: 4px;
+    }
+    .b-chip-sel select {
+      background: transparent; border: none; color: #fff;
+      font: inherit; font-size: .78rem; font-weight: 800;
+      cursor: pointer; outline: none;
+      appearance: none; -webkit-appearance: none;
+    }
+    .b-chip-btn {
+      border: 1px solid var(--line); background: #fff;
+      border-radius: 8px; padding: 5px 10px;
+      font-size: .78rem; font-weight: 800; color: var(--ink);
+    }
+    .b-chip-btn.active { background: var(--green); color: #fff; border-color: var(--green); }
+    .b-collapsed {
+      display: flex; align-items: center; gap: 8px;
+      padding: 0 0 2px;
+    }
+    .b-collapsed-hint {
+      font-size: .68rem; color: var(--muted); margin-left: auto;
+      display: flex; align-items: center; gap: 3px;
+    }
+    .b-body { padding: 10px 12px; display: grid; gap: 8px; }
+
+    /* ────────────────────────────────────── */
+    /*  OPTION C — Tab bar bas               */
+    /* ────────────────────────────────────── */
+    .c-topbar {
+      display: flex; align-items: center; gap: 8px;
+      padding: 10px 14px;
+      background: rgba(255,255,255,.95);
+      border-bottom: 1px solid var(--line);
+    }
+    .c-fuel-pill {
+      background: var(--ink); color: #fff;
+      border-radius: 999px; padding: 6px 12px;
+      font-size: .8rem; font-weight: 800;
+      display: flex; align-items: center; gap: 4px;
+    }
+    .c-fuel-pill select {
+      background: transparent; border: none; color: #fff;
+      font: inherit; font-size: .8rem; font-weight: 800;
+      cursor: pointer; outline: none;
+      appearance: none; -webkit-appearance: none;
+    }
+    .c-status {
+      font-size: .75rem; font-weight: 700; color: var(--green-dark);
+      background: rgba(15,123,99,.1);
+      border-radius: 999px; padding: 5px 10px;
+    }
+    .c-geo {
+      margin-left: auto;
+      width: 36px; height: 36px;
+      background: #eef2ef; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem;
+    }
+    .c-body {
+      padding: 10px 12px;
+      display: grid; gap: 8px;
+      padding-bottom: 64px;
+    }
+    .c-tabbar {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      display: flex;
+      background: rgba(255,255,255,.96);
+      border-top: 1px solid var(--line);
+      backdrop-filter: blur(10px);
+    }
+    .c-tabitem {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; padding: 8px 0 10px;
+      font-size: .7rem; font-weight: 800;
+      color: var(--muted);
+      gap: 3px;
+    }
+    .c-tabitem.active { color: var(--green); }
+    .c-tabicon { font-size: 1.1rem; }
+
+    /* ────────────────────────────────────── */
+    /*  OPTION D — Bottom sheet              */
+    /* ────────────────────────────────────── */
+    .d-topbar {
+      display: flex; align-items: center; gap: 8px;
+      padding: 10px 14px;
+      background: rgba(255,255,255,.95);
+      border-bottom: 1px solid var(--line);
+    }
+    .d-fuel-pill {
+      background: var(--ink); color: #fff;
+      border-radius: 999px; padding: 6px 12px;
+      font-size: .8rem; font-weight: 800;
+      display: flex; align-items: center; gap: 4px;
+    }
+    .d-fuel-pill select {
+      background: transparent; border: none; color: #fff;
+      font: inherit; font-size: .8rem; font-weight: 800;
+      cursor: pointer; outline: none;
+      appearance: none; -webkit-appearance: none;
+    }
+    .d-status {
+      font-size: .75rem; font-weight: 700; color: var(--green-dark);
+      background: rgba(15,123,99,.1);
+      border-radius: 999px; padding: 5px 10px;
+    }
+    .d-filter-btn {
+      margin-left: auto;
+      display: flex; align-items: center; gap: 5px;
+      background: #fff; border: 1px solid var(--line);
+      border-radius: 999px; padding: 5px 11px;
+      font-size: .78rem; font-weight: 800; color: var(--ink);
+    }
+    .d-body {
+      padding: 10px 12px;
+      display: grid; gap: 8px;
+      padding-bottom: 140px;
+    }
+    .d-sheet {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      background: #fff;
+      border-radius: 20px 20px 0 0;
+      border-top: 1px solid var(--line);
+      padding: 8px 14px 14px;
+      box-shadow: 0 -8px 30px rgba(0,0,0,.10);
+    }
+    .d-handle {
+      width: 36px; height: 4px;
+      background: var(--line); border-radius: 999px;
+      margin: 0 auto 12px;
+    }
+    .d-sheet-row {
+      display: flex; gap: 7px; flex-wrap: wrap;
+      margin-bottom: 8px;
+    }
+    .d-sheet-label {
+      font-size: .72rem; font-weight: 800;
+      color: var(--muted); margin-bottom: 5px;
+    }
+    .d-sheet-btn {
+      border: 1px solid var(--line); background: #fff;
+      border-radius: 8px; padding: 6px 12px;
+      font-size: .8rem; font-weight: 800; color: var(--ink);
+    }
+    .d-sheet-btn.active {
+      background: var(--green); color: #fff; border-color: var(--green);
+    }
+    .d-geo-full {
+      width: 100%; display: flex; align-items: center;
+      justify-content: center; gap: 7px;
+      background: var(--ink); color: #fff;
+      border-radius: 10px; padding: 11px;
+      font-size: .85rem; font-weight: 800;
+      margin-top: 4px;
+    }
+  </style>
+</head>
+<body>
+  <h1 class="page-title">Propositions de redesign — Header mobile</h1>
+
+  <div class="grid">
+
+    <!-- ══════ OPTION A ══════ -->
+    <div>
+      <div class="phone">
+        <div class="phone-screen">
+          <!-- Sticky strip -->
+          <div class="a-strip">
+            <div class="a-fuel">
+              <span>⛽</span>
+              <select><option>Gazole</option><option>E10</option><option>SP95</option></select>
+              <span style="opacity:.6;font-size:.7rem">▾</span>
+            </div>
+            <div class="a-tabs">
+              <div class="a-tab active">Autour</div>
+              <div class="a-tab">Favoris ★2</div>
+            </div>
+            <div class="a-pill">8 stations</div>
+          </div>
+
+          <!-- Station list -->
+          <div class="a-body">
+            <div class="card">
+              <div class="card-title">TotalEnergies</div>
+              <div class="card-addr">14 rue de Rivoli, Paris</div>
+              <div class="chips">
+                <span class="chip green">Gazole 1,759 €</span>
+                <span class="chip">320 m</span>
+                <span class="chip">MAJ 09/04 08:12</span>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-title">Shell</div>
+              <div class="card-addr">8 bd Saint-Germain, Paris</div>
+              <div class="chips">
+                <span class="chip green">Gazole 1,779 €</span>
+                <span class="chip">580 m</span>
+                <span class="chip">MAJ 09/04 07:45</span>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-title">Intermarché</div>
+              <div class="card-addr">3 av. Daumesnil, Paris</div>
+              <div class="chips">
+                <span class="chip green">Gazole 1,739 €</span>
+                <span class="chip">1,2 km</span>
+                <span class="chip">MAJ 09/04 06:00</span>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-title">BP</div>
+              <div class="card-addr">22 rue du Temple, Paris</div>
+              <div class="chips">
+                <span class="chip green">Gazole 1,799 €</span>
+                <span class="chip">1,5 km</span>
+                <span class="chip">MAJ 09/04 09:10</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="label">A — Compact strip</div>
+      <div class="label-sub">Tout en une seule barre.<br>Titre supprimé. Le plus minimaliste.</div>
+    </div>
+
+    <!-- ══════ OPTION B ══════ -->
+    <div>
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="b-top">
+            <div class="b-row1">
+              <span class="b-title">Prix carburants</span>
+              <span class="b-pill">8 stations</span>
+            </div>
+            <div class="b-row2">
+              <div class="b-chip-sel">
+                <span>⛽</span>
+                <select><option>Gazole</option><option>E10</option></select>
+                <span style="opacity:.6;font-size:.7rem">▾</span>
+              </div>
+              <div class="b-chip-btn active">Autour</div>
+              <div class="b-chip-btn">Favoris ★2</div>
+              <div class="b-chip-btn" style="margin-left:auto">↕ Prix</div>
+            </div>
+          </div>
+
+          <!-- Station list -->
+          <div class="b-body">
+            <div class="card">
+              <div class="card-title">TotalEnergies</div>
+              <div class="card-addr">14 rue de Rivoli, Paris</div>
+              <div class="chips">
+                <span class="chip green">Gazole 1,759 €</span>
+                <span class="chip">320 m</span>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-title">Shell</div>
+              <div class="card-addr">8 bd Saint-Germain, Paris</div>
+              <div class="chips">
+                <span class="chip green">Gazole 1,779 €</span>
+                <span class="chip">580 m</span>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-title">Intermarché</div>
+              <div class="card-addr">3 av. Daumesnil, Paris</div>
+              <div class="chips">
+                <span class="chip green">Gazole 1,739 €</span>
+                <span class="chip">1,2 km</span>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-title">BP</div>
+              <div class="card-addr">22 rue du Temple, Paris</div>
+              <div class="chips">
+                <span class="chip green">Gazole 1,799 €</span>
+                <span class="chip">1,5 km</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="label">B — Header condensé</div>
+      <div class="label-sub">Titre court + tous les contrôles<br>sur une ligne compacte.</div>
+    </div>
+
+    <!-- ══════ OPTION C ══════ -->
+    <div>
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="c-topbar">
+            <div class="c-fuel-pill">
+              <span>⛽</span>
+              <select><option>Gazole</option><option>E10</option></select>
+              <span style="opacity:.6;font-size:.7rem">▾</span>
+            </div>
+            <div class="c-status">8 stations</div>
+            <div class="c-geo">◎</div>
+          </div>
+
+          <div class="c-body">
+            <div class="card">
+              <div class="card-title">TotalEnergies</div>
+              <div class="card-addr">14 rue de Rivoli, Paris</div>
+              <div class="chips">
+                <span class="chip green">Gazole 1,759 €</span>
+                <span class="chip">320 m</span>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-title">Shell</div>
+              <div class="card-addr">8 bd Saint-Germain, Paris</div>
+              <div class="chips">
+                <span class="chip green">Gazole 1,779 €</span>
+                <span class="chip">580 m</span>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-title">Intermarché</div>
+              <div class="card-addr">3 av. Daumesnil, Paris</div>
+              <div class="chips">
+                <span class="chip green">Gazole 1,739 €</span>
+                <span class="chip">1,2 km</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tab bar -->
+          <div class="c-tabbar">
+            <div class="c-tabitem active">
+              <span class="c-tabicon">📍</span>
+              Autour
+            </div>
+            <div class="c-tabitem">
+              <span class="c-tabicon">★</span>
+              Favoris 2/5
+            </div>
+            <div class="c-tabitem">
+              <span class="c-tabicon">↕</span>
+              Trier
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="label">C — Tab bar en bas</div>
+      <div class="label-sub">Navigation native iOS en bas.<br>Maximum d'espace pour la liste.</div>
+    </div>
+
+    <!-- ══════ OPTION D ══════ -->
+    <div>
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="d-topbar">
+            <div class="d-fuel-pill">
+              <span>⛽</span>
+              <select><option>Gazole</option><option>E10</option></select>
+              <span style="opacity:.6;font-size:.7rem">▾</span>
+            </div>
+            <div class="d-status">8 stations</div>
+            <div class="d-filter-btn">
+              <span>⚙</span> Filtres
+            </div>
+          </div>
+
+          <div class="d-body">
+            <div class="card">
+              <div class="card-title">TotalEnergies</div>
+              <div class="card-addr">14 rue de Rivoli, Paris</div>
+              <div class="chips">
+                <span class="chip green">Gazole 1,759 €</span>
+                <span class="chip">320 m</span>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-title">Shell</div>
+              <div class="card-addr">8 bd Saint-Germain, Paris</div>
+              <div class="chips">
+                <span class="chip green">Gazole 1,779 €</span>
+                <span class="chip">580 m</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bottom sheet -->
+          <div class="d-sheet">
+            <div class="d-handle"></div>
+            <div class="d-sheet-label">Vue</div>
+            <div class="d-sheet-row">
+              <div class="d-sheet-btn active">📍 Autour</div>
+              <div class="d-sheet-btn">★ Favoris 2/5</div>
+            </div>
+            <div class="d-sheet-label">Trier par</div>
+            <div class="d-sheet-row">
+              <div class="d-sheet-btn active">Distance ↑</div>
+              <div class="d-sheet-btn">Prix</div>
+            </div>
+            <div class="d-geo-full">◎ Me géolocaliser</div>
+          </div>
+        </div>
+      </div>
+      <div class="label">D — Bottom sheet filtres</div>
+      <div class="label-sub">1 ligne en haut. Tous les filtres<br>dans un drawer glissant.</div>
+    </div>
+
+  </div>
+</body>
+</html>

@@ -40,7 +40,8 @@ const elements = {
   stationList: document.querySelector("#stationList"),
   favoriteCount: document.querySelector("#favoriteCount"),
   stationTemplate: document.querySelector("#stationTemplate"),
-  sortToggleButtons: document.querySelectorAll("[data-sort-toggle]"),
+  sortTab: document.querySelector("#sortTab"),
+  sortTabLabel: document.querySelector("#sortTabLabel"),
   viewButtons: document.querySelectorAll("[data-view]"),
 };
 
@@ -63,12 +64,10 @@ function bindEvents() {
 
   elements.locateButton.addEventListener("click", locateUser);
 
-  elements.sortToggleButtons.forEach((button) => {
-    button.addEventListener("click", () => {
-      cycleSort(button.dataset.sortToggle);
-      writeUrlState("push");
-      render();
-    });
+  elements.sortTab.addEventListener("click", () => {
+    cycleAllSorts();
+    writeUrlState("push");
+    render();
   });
 
   elements.viewButtons.forEach((button) => {
@@ -156,7 +155,7 @@ function locateUser() {
   }
 
   elements.locateButton.disabled = true;
-  elements.locateButton.textContent = "Localisation...";
+  elements.locateButton.style.opacity = "0.5";
 
   navigator.geolocation.getCurrentPosition(
     (position) => {
@@ -166,13 +165,13 @@ function locateUser() {
         label: "Ta position",
       };
       elements.locateButton.disabled = false;
-      elements.locateButton.innerHTML = '<span aria-hidden="true">◎</span> Me géolocaliser';
+      elements.locateButton.style.opacity = "";
       loadStations();
     },
     () => {
       state.userPosition = DEFAULT_POSITION;
       elements.locateButton.disabled = false;
-      elements.locateButton.innerHTML = '<span aria-hidden="true">◎</span> Me géolocaliser';
+      elements.locateButton.style.opacity = "";
       loadStations();
     },
     { enableHighAccuracy: true, timeout: 9000, maximumAge: 60000 }
@@ -398,47 +397,40 @@ function updateFavoriteCount() {
   elements.favoriteCount.textContent = `${state.favorites.length}/5`;
 }
 
-function cycleSort(sortBy) {
-  if (state.sortBy !== sortBy) {
-    state.sortBy = sortBy;
-    state.sortOrder = "asc";
-    return;
-  }
+const SORT_CYCLE = [
+  { sortBy: "distance", sortOrder: "asc" },
+  { sortBy: "distance", sortOrder: "desc" },
+  { sortBy: "price", sortOrder: "asc" },
+  { sortBy: "price", sortOrder: "desc" },
+  { sortBy: "none", sortOrder: "asc" },
+];
 
-  if (state.sortOrder === "asc") {
-    state.sortOrder = "desc";
-    return;
-  }
-
-  state.sortBy = "none";
-  state.sortOrder = "asc";
+function cycleAllSorts() {
+  const idx = SORT_CYCLE.findIndex(
+    (s) => s.sortBy === state.sortBy && s.sortOrder === state.sortOrder
+  );
+  const next = SORT_CYCLE[(idx + 1) % SORT_CYCLE.length];
+  state.sortBy = next.sortBy;
+  state.sortOrder = next.sortOrder;
 }
 
 function syncControlsFromState() {
   elements.fuelSelect.value = state.selectedFuel;
-  elements.sortToggleButtons.forEach((button) => {
-    const sortBy = button.dataset.sortToggle;
-    const isActive = state.sortBy === sortBy;
-    button.classList.toggle("active", isActive);
-    button.querySelector(".sort-arrow").textContent = getSortArrow(sortBy);
-    button.setAttribute("aria-pressed", String(isActive));
-    button.setAttribute("aria-label", getSortLabel(sortBy));
-  });
+
+  const sortLabel = getSortTabLabel();
+  elements.sortTabLabel.textContent = sortLabel;
+  elements.sortTab.classList.toggle("active", state.sortBy !== "none");
+
   elements.viewButtons.forEach((button) => {
     button.classList.toggle("active", button.dataset.view === state.view);
   });
 }
 
-function getSortArrow(sortBy) {
-  if (state.sortBy !== sortBy) return "-";
-  return state.sortOrder === "desc" ? "↓" : "↑";
-}
-
-function getSortLabel(sortBy) {
-  const label = sortBy === "price" ? "prix" : "distance";
-  if (state.sortBy !== sortBy) return `Activer le tri par ${label} croissant`;
-  if (state.sortOrder === "asc") return `Passer le tri par ${label} en décroissant`;
-  return `Désactiver le tri par ${label}`;
+function getSortTabLabel() {
+  if (state.sortBy === "none") return "Trier";
+  const name = state.sortBy === "price" ? "Prix" : "Distance";
+  const arrow = state.sortOrder === "desc" ? " ↓" : " ↑";
+  return name + arrow;
 }
 
 
