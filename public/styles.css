@@ -69,7 +69,6 @@ h1 {
 }
 
 .status-pill,
-.summary-band,
 .station-card,
 .controls {
   border: 1px solid var(--line);
@@ -116,8 +115,7 @@ h1 {
 
 select,
 .sort-toggle-button,
-.locate-button,
-.summary-band button {
+.locate-button {
   min-height: 44px;
   border-radius: 8px;
   border: 1px solid var(--line);
@@ -168,8 +166,7 @@ select {
   color: #fff;
 }
 
-.locate-button,
-.summary-band button {
+.locate-button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -212,29 +209,37 @@ select {
   opacity: 0.76;
 }
 
-.summary-band {
+.ptr-indicator {
+  position: fixed;
+  top: -52px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 44px;
+  height: 44px;
   display: flex;
-  justify-content: space-between;
-  gap: 18px;
   align-items: center;
-  border-radius: 8px;
-  margin-top: 16px;
-  padding: 14px 16px;
-}
-
-.summary-band strong,
-.summary-band span {
-  display: block;
-}
-
-.summary-band span {
-  margin-top: 4px;
-  color: var(--muted);
-}
-
-.summary-band button {
+  justify-content: center;
   background: var(--green);
-  border-color: var(--green);
+  border-radius: 50%;
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(15, 123, 99, 0.35);
+  pointer-events: none;
+  opacity: 0;
+  z-index: 200;
+}
+
+.ptr-indicator.ptr-spinning {
+  opacity: 1;
+  top: 16px;
+  transition: top 0.25s ease, opacity 0.2s;
+}
+
+.ptr-indicator.ptr-spinning svg {
+  animation: ptr-spin 0.7s linear infinite;
+}
+
+@keyframes ptr-spin {
+  to { transform: rotate(360deg); }
 }
 
 .station-list {
@@ -334,8 +339,7 @@ select {
     padding-top: 14px;
   }
 
-  .topbar,
-  .summary-band {
+  .topbar {
     align-items: stretch;
     flex-direction: column;
   }
@@ -381,7 +385,6 @@ select {
     font-size: 0.84rem;
   }
 
-  .summary-band button,
   .locate-button {
     width: 100%;
   }

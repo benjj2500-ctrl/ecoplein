@@ -37,10 +37,7 @@ const elements = {
   dataStatus: document.querySelector("#dataStatus"),
   fuelSelect: document.querySelector("#fuelSelect"),
   locateButton: document.querySelector("#locateButton"),
-  refreshButton: document.querySelector("#refreshButton"),
   stationList: document.querySelector("#stationList"),
-  summaryTitle: document.querySelector("#summaryTitle"),
-  summaryText: document.querySelector("#summaryText"),
   favoriteCount: document.querySelector("#favoriteCount"),
   stationTemplate: document.querySelector("#stationTemplate"),
   sortToggleButtons: document.querySelectorAll("[data-sort-toggle]"),
@@ -53,6 +50,7 @@ async function init() {
   syncControlsFromState();
   writeUrlState("replace");
   bindEvents();
+  initPullToRefresh();
   locateUser();
 }
 
@@ -64,10 +62,6 @@ function bindEvents() {
   });
 
   elements.locateButton.addEventListener("click", locateUser);
-
-  elements.refreshButton.addEventListener("click", async () => {
-    await loadStations(true);
-  });
 
   elements.sortToggleButtons.forEach((button) => {
     button.addEventListener("click", () => {
@@ -236,15 +230,11 @@ function render() {
   updateFavoriteCount();
 
   if (state.isLoading) {
-    elements.summaryTitle.textContent = "Chargement en cours";
-    elements.summaryText.textContent = "Récupération du flux officiel et préparation de la liste.";
     showEmpty("Chargement des stations...");
     return;
   }
 
   if (!state.userPosition) {
-    elements.summaryTitle.textContent = "Position attendue";
-    elements.summaryText.textContent = "Autorise la géolocalisation ou relance la demande.";
     showEmpty("En attente de ta position.");
     return;
   }
@@ -253,11 +243,6 @@ function render() {
   const isFavoritesView = state.view === "favorites";
   const list = isFavoritesView ? rows.filter((row) => state.favorites.includes(row.id)) : rows;
   const displayed = isFavoritesView ? sortRows(list).slice(0, 5) : sortNearestTen(rows);
-
-  elements.summaryTitle.textContent = isFavoritesView
-    ? `Favoris ${state.selectedFuel}`
-    : `10 stations pour ${state.selectedFuel}`;
-  elements.summaryText.textContent = getSummaryText();
 
   if (displayed.length === 0) {
     showEmpty(
@@ -389,8 +374,6 @@ function toggleFavorite(stationId) {
   } else if (state.favorites.length < 5) {
     state.favorites = [...state.favorites, stationId];
   } else {
-    elements.summaryTitle.textContent = "Limite atteinte";
-    elements.summaryText.textContent = "Tu peux conserver 5 stations favorites maximum.";
     return;
   }
 
@@ -458,15 +441,6 @@ function getSortLabel(sortBy) {
   return `Désactiver le tri par ${label}`;
 }
 
-function getSummaryText() {
-  if (state.sortBy === "none") {
-    return `${state.userPosition.label} - ordre naturel autour de toi.`;
-  }
-
-  return `${state.userPosition.label} - tri par ${
-    state.sortBy === "price" ? "prix" : "distance"
-  } ${state.sortOrder === "desc" ? "décroissant" : "croissant"}.`;
-}
 
 function readUrlState() {
   const params = new URLSearchParams(window.location.search);
@@ -620,4 +594,47 @@ function formatUpdateDate(value) {
     hour: "2-digit",
     minute: "2-digit",
   }).format(date);
+}
+
+function initPullToRefresh() {
+  const indicator = document.getElementById("ptrIndicator");
+  const THRESHOLD = 72;
+  let startY = 0;
+  let active = false;
+
+  document.addEventListener("touchstart", (e) => {
+    if (window.scrollY === 0 && !state.isLoading) {
+      startY = e.touches[0].clientY;
+      active = true;
+    }
+  }, { passive: true });
+
+  document.addEventListener("touchmove", (e) => {
+    if (!active) return;
+    const pull = Math.max(0, e.touches[0].clientY - startY);
+    if (pull === 0) return;
+    const progress = Math.min(pull / THRESHOLD, 1);
+    const offset = -52 + 68 * progress;
+    indicator.style.top = `${offset}px`;
+    indicator.style.opacity = String(progress);
+    indicator.classList.toggle("ptr-ready", pull >= THRESHOLD);
+  }, { passive: true });
+
+  document.addEventListener("touchend", async () => {
+    if (!active) return;
+    active = false;
+    const triggered = indicator.classList.contains("ptr-ready");
+    indicator.classList.remove("ptr-ready");
+
+    if (triggered) {
+      indicator.style.top = "";
+      indicator.style.opacity = "";
+      indicator.classList.add("ptr-spinning");
+      await loadStations(true);
+      indicator.classList.remove("ptr-spinning");
+    } else {
+      indicator.style.top = "";
+      indicator.style.opacity = "";
+    }
+  });
 }
