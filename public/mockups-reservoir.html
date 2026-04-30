@@ -1,0 +1,642 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Mockups — Réservoir</title>
+  <style>
+    :root {
+      --bg: #f6f7f4;
+      --ink: #1d2623;
+      --muted: #68746f;
+      --line: #d9ded7;
+      --green: #0f7b63;
+      --green-dark: #0b5f4d;
+      --coral: #d85f47;
+      --shadow: 0 8px 24px rgba(30,42,38,.10);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #e8ebe7; padding: 32px 16px 64px; color: var(--ink); }
+
+    h1.page-title {
+      text-align: center; font-size: 1rem; font-weight: 800;
+      color: var(--muted); letter-spacing: .06em; text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .page-sub {
+      text-align: center; font-size: .85rem; color: var(--muted);
+      margin-bottom: 40px;
+    }
+
+    .section-title {
+      font-size: .8rem; font-weight: 800; color: var(--muted);
+      letter-spacing: .06em; text-transform: uppercase;
+      text-align: center; margin: 48px 0 24px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+      gap: 32px;
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    /* iPhone frame */
+    .phone {
+      background: #1a1a1a; border-radius: 44px; padding: 14px;
+      box-shadow: 0 24px 60px rgba(0,0,0,.35), inset 0 0 0 1px #333;
+      width: 100%; max-width: 320px; margin: 0 auto;
+    }
+    .phone-screen {
+      background: var(--bg); border-radius: 32px;
+      overflow: hidden; position: relative; min-height: 520px;
+    }
+    .phone-screen::before {
+      content: ''; display: block; width: 90px; height: 26px;
+      background: #1a1a1a; border-radius: 0 0 16px 16px; margin: 0 auto;
+    }
+    .label { text-align: center; margin-top: 16px; font-weight: 800; font-size: .95rem; }
+    .label-sub { text-align: center; margin-top: 4px; font-size: .82rem; color: var(--muted); line-height: 1.45; padding: 0 8px; }
+
+    /* Shared topbar */
+    .topbar {
+      display: flex; align-items: center; gap: 8px;
+      padding: 8px 12px;
+      background: rgba(255,255,255,.95);
+      border-bottom: 1px solid var(--line);
+    }
+    .fuel-pill {
+      display: flex; align-items: center; gap: 5px;
+      background: var(--ink); color: #fff;
+      border-radius: 999px; padding: 5px 12px;
+      font-size: .82rem; font-weight: 800;
+    }
+    .status {
+      font-size: .75rem; font-weight: 700; color: var(--green-dark);
+      background: rgba(15,123,99,.1); border: 1px solid rgba(15,123,99,.2);
+      border-radius: 999px; padding: 4px 10px;
+    }
+    .geo { margin-left: auto; font-size: 1rem; width: 32px; height: 32px;
+      background: #fff; border: 1px solid var(--line); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center; }
+
+    /* Shared tabbar */
+    .tabbar {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      display: flex; background: rgba(255,255,255,.97);
+      border-top: 1px solid var(--line);
+    }
+    .tabitem {
+      flex: 1; display: flex; flex-direction: column; align-items: center;
+      padding: 7px 4px 9px; font-size: .68rem; font-weight: 700;
+      color: var(--muted); gap: 2px;
+    }
+    .tabitem .ti { font-size: 1.05rem; }
+    .tabitem.active { color: var(--green); }
+
+    /* Shared card base */
+    .card {
+      background: #fff; border: 1px solid var(--line);
+      border-radius: 10px; padding: 12px 14px;
+      box-shadow: var(--shadow); margin: 0 10px 8px;
+    }
+    .card-row1 { display: flex; justify-content: space-between; align-items: flex-start; }
+    .card-name { font-weight: 800; font-size: .9rem; }
+    .card-addr { font-size: .74rem; color: var(--muted); margin-top: 2px; }
+    .fav { width: 32px; height: 32px; border: 1px solid var(--line); border-radius: 7px;
+      background: #fff; display: flex; align-items: center; justify-content: center;
+      color: var(--coral); font-size: 1rem; flex-shrink: 0; }
+    .chips { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 8px; }
+    .chip {
+      font-size: .74rem; font-weight: 800;
+      padding: 3px 9px; border-radius: 999px;
+      background: #eef2ef; color: var(--muted);
+    }
+    .chip.green { background: rgba(15,123,99,.12); color: var(--green-dark); }
+    .chip.amber { background: rgba(180,120,0,.10); color: #7a5200; }
+    .chip.blue  { background: rgba(45,108,223,.10); color: #1a4fa8; }
+
+    /* Body scroll zone */
+    .body { padding: 8px 0 60px; }
+
+    /* ─────────────────────────────────── */
+    /*  OPTION 1 — Chip "Plein" additionnel */
+    /* ─────────────────────────────────── */
+
+    /* ─────────────────────────────────── */
+    /*  OPTION 2 — Chip prix étendu 2 lignes */
+    /* ─────────────────────────────────── */
+    .chip-stack {
+      display: flex; flex-direction: column; align-items: flex-start;
+      background: rgba(15,123,99,.12); border-radius: 10px;
+      padding: 5px 10px; gap: 1px;
+    }
+    .chip-stack .main { font-size: .78rem; font-weight: 800; color: var(--green-dark); }
+    .chip-stack .sub  { font-size: .68rem; font-weight: 700; color: var(--green-dark); opacity: .75; }
+
+    /* ─────────────────────────────────── */
+    /*  OPTION 3 — Highlight carte entière  */
+    /* ─────────────────────────────────── */
+    .card-highlight {
+      background: #fff; border: 1.5px solid rgba(15,123,99,.35);
+      border-radius: 10px; padding: 12px 14px;
+      box-shadow: 0 4px 16px rgba(15,123,99,.12); margin: 0 10px 8px;
+    }
+    .total-banner {
+      background: rgba(15,123,99,.1); border-radius: 8px;
+      padding: 6px 10px; display: flex; justify-content: space-between;
+      align-items: center; margin-top: 8px;
+    }
+    .total-label { font-size: .74rem; font-weight: 700; color: var(--green-dark); }
+    .total-value { font-size: .92rem; font-weight: 800; color: var(--green-dark); }
+
+    /* ─────────────────────────────────── */
+    /*  OPTION 4 — Chip prix large         */
+    /* ─────────────────────────────────── */
+    .chip-wide {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(15,123,99,.12);
+      border-radius: 999px; padding: 4px 12px 4px 4px;
+    }
+    .chip-wide .per-l {
+      background: var(--green); color: #fff;
+      border-radius: 999px; padding: 3px 9px;
+      font-size: .76rem; font-weight: 800;
+    }
+    .chip-wide .total-l {
+      font-size: .76rem; font-weight: 800; color: var(--green-dark);
+    }
+
+    /* ─────────────────────────────────── */
+    /*  Setting: where to put reservoir    */
+    /* ─────────────────────────────────── */
+    .settings-sheet {
+      position: absolute; bottom: 46px; left: 0; right: 0;
+      background: #fff; border-radius: 18px 18px 0 0;
+      border-top: 1px solid var(--line);
+      padding: 6px 14px 16px;
+      box-shadow: 0 -8px 30px rgba(0,0,0,.10);
+    }
+    .sheet-handle { width: 32px; height: 3px; background: var(--line);
+      border-radius: 999px; margin: 6px auto 12px; }
+    .sheet-title { font-size: .8rem; font-weight: 800; color: var(--muted);
+      text-transform: uppercase; letter-spacing: .05em; margin-bottom: 10px; }
+    .setting-row {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--line);
+    }
+    .setting-row:last-child { border-bottom: none; }
+    .setting-label { font-size: .85rem; font-weight: 700; }
+    .setting-sub { font-size: .74rem; color: var(--muted); margin-top: 1px; }
+    .stepper {
+      display: flex; align-items: center; gap: 6px;
+    }
+    .stepper-btn {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: #eef2ef; border: none;
+      font-size: 1rem; font-weight: 800; color: var(--ink);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .stepper-val {
+      font-size: .9rem; font-weight: 800; min-width: 40px; text-align: center;
+    }
+    .topbar-reservoir {
+      display: flex; align-items: center; gap: 6px;
+      background: rgba(255,255,255,.12);
+      border: 1px dashed rgba(255,255,255,.4);
+      border-radius: 999px; padding: 4px 10px;
+      font-size: .76rem; font-weight: 700; color: rgba(255,255,255,.9);
+      cursor: pointer; margin-left: 2px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1 class="page-title">Propositions — Réservoir & Coût du plein</h1>
+  <p class="page-sub">2 questions : où saisir la capacité ? comment afficher le total ?</p>
+
+  <!-- ════════════ SECTION 1 : AFFICHAGE DU TOTAL ════════════ -->
+  <div class="section-title">Affichage du total sur les cartes</div>
+  <div class="grid">
+
+    <!-- Option 1A : chip additionnel -->
+    <div>
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="topbar">
+            <div class="fuel-pill">⛽ Gazole</div>
+            <div class="status">8 stations</div>
+            <div class="geo">◎</div>
+          </div>
+          <div class="body">
+            <div class="card">
+              <div class="card-row1">
+                <div><div class="card-name">TotalEnergies</div><div class="card-addr">14 rue de Rivoli</div></div>
+                <div class="fav">☆</div>
+              </div>
+              <div class="chips">
+                <span class="chip green">Gazole 1,759 €/L</span>
+                <span class="chip amber">Plein ~88 €</span>
+                <span class="chip">320 m</span>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-row1">
+                <div><div class="card-name">Shell</div><div class="card-addr">8 bd Saint-Germain</div></div>
+                <div class="fav">☆</div>
+              </div>
+              <div class="chips">
+                <span class="chip green">Gazole 1,779 €/L</span>
+                <span class="chip amber">Plein ~89 €</span>
+                <span class="chip">580 m</span>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-row1">
+                <div><div class="card-name">Intermarché</div><div class="card-addr">3 av. Daumesnil</div></div>
+                <div class="fav">☆</div>
+              </div>
+              <div class="chips">
+                <span class="chip green">Gazole 1,739 €/L</span>
+                <span class="chip amber">Plein ~87 €</span>
+                <span class="chip">1,2 km</span>
+              </div>
+            </div>
+          </div>
+          <div class="tabbar">
+            <div class="tabitem active"><span class="ti">📍</span>Autour</div>
+            <div class="tabitem"><span class="ti">★</span>Favoris 2/5</div>
+            <div class="tabitem"><span class="ti">↕</span>Trier</div>
+          </div>
+        </div>
+      </div>
+      <div class="label">1A — Chip séparé</div>
+      <div class="label-sub">Chip ambre distinct.<br>Lecture rapide, très scannable.</div>
+    </div>
+
+    <!-- Option 1B : chip prix 2 lignes -->
+    <div>
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="topbar">
+            <div class="fuel-pill">⛽ Gazole</div>
+            <div class="status">8 stations</div>
+            <div class="geo">◎</div>
+          </div>
+          <div class="body">
+            <div class="card">
+              <div class="card-row1">
+                <div><div class="card-name">TotalEnergies</div><div class="card-addr">14 rue de Rivoli</div></div>
+                <div class="fav">☆</div>
+              </div>
+              <div class="chips">
+                <div class="chip-stack">
+                  <span class="main">1,759 €/L</span>
+                  <span class="sub">Plein ≈ 88 €</span>
+                </div>
+                <span class="chip">320 m</span>
+                <span class="chip">MAJ 14:29</span>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-row1">
+                <div><div class="card-name">Shell</div><div class="card-addr">8 bd Saint-Germain</div></div>
+                <div class="fav">☆</div>
+              </div>
+              <div class="chips">
+                <div class="chip-stack">
+                  <span class="main">1,779 €/L</span>
+                  <span class="sub">Plein ≈ 89 €</span>
+                </div>
+                <span class="chip">580 m</span>
+                <span class="chip">MAJ 14:10</span>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-row1">
+                <div><div class="card-name">Intermarché</div><div class="card-addr">3 av. Daumesnil</div></div>
+                <div class="fav">☆</div>
+              </div>
+              <div class="chips">
+                <div class="chip-stack">
+                  <span class="main">1,739 €/L</span>
+                  <span class="sub">Plein ≈ 87 €</span>
+                </div>
+                <span class="chip">1,2 km</span>
+                <span class="chip">MAJ 13:55</span>
+              </div>
+            </div>
+          </div>
+          <div class="tabbar">
+            <div class="tabitem active"><span class="ti">📍</span>Autour</div>
+            <div class="tabitem"><span class="ti">★</span>Favoris 2/5</div>
+            <div class="tabitem"><span class="ti">↕</span>Trier</div>
+          </div>
+        </div>
+      </div>
+      <div class="label">1B — Prix empilé</div>
+      <div class="label-sub">Prix/L + total dans un seul chip.<br>Compact, hiérarchie claire.</div>
+    </div>
+
+    <!-- Option 1C : bandeau total en bas de carte -->
+    <div>
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="topbar">
+            <div class="fuel-pill">⛽ Gazole</div>
+            <div class="status">8 stations</div>
+            <div class="geo">◎</div>
+          </div>
+          <div class="body">
+            <div class="card-highlight">
+              <div class="card-row1">
+                <div><div class="card-name">TotalEnergies</div><div class="card-addr">14 rue de Rivoli</div></div>
+                <div class="fav">★</div>
+              </div>
+              <div class="chips">
+                <span class="chip green">1,739 €/L</span>
+                <span class="chip">320 m</span>
+                <span class="chip">MAJ 14:29</span>
+              </div>
+              <div class="total-banner">
+                <span class="total-label">⛽ Plein 50 L estimé</span>
+                <span class="total-value">86,95 €</span>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-row1">
+                <div><div class="card-name">Shell</div><div class="card-addr">8 bd Saint-Germain</div></div>
+                <div class="fav">☆</div>
+              </div>
+              <div class="chips">
+                <span class="chip green">1,779 €/L</span>
+                <span class="chip">580 m</span>
+                <span class="chip">MAJ 14:10</span>
+              </div>
+              <div class="total-banner">
+                <span class="total-label">⛽ Plein 50 L estimé</span>
+                <span class="total-value">88,95 €</span>
+              </div>
+            </div>
+          </div>
+          <div class="tabbar">
+            <div class="tabitem active"><span class="ti">📍</span>Autour</div>
+            <div class="tabitem"><span class="ti">★</span>Favoris 2/5</div>
+            <div class="tabitem"><span class="ti">↕</span>Trier</div>
+          </div>
+        </div>
+      </div>
+      <div class="label">1C — Bandeau plein</div>
+      <div class="label-sub">Ligne dédiée avec étiquette + montant.<br>Le plus lisible, un peu plus grand.</div>
+    </div>
+
+    <!-- Option 1D : chip pill large -->
+    <div>
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="topbar">
+            <div class="fuel-pill">⛽ Gazole</div>
+            <div class="status">8 stations</div>
+            <div class="geo">◎</div>
+          </div>
+          <div class="body">
+            <div class="card">
+              <div class="card-row1">
+                <div><div class="card-name">TotalEnergies</div><div class="card-addr">14 rue de Rivoli</div></div>
+                <div class="fav">☆</div>
+              </div>
+              <div class="chips">
+                <div class="chip-wide">
+                  <span class="per-l">1,759 €</span>
+                  <span class="total-l">→ 88 € le plein</span>
+                </div>
+                <span class="chip">320 m</span>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-row1">
+                <div><div class="card-name">Shell</div><div class="card-addr">8 bd Saint-Germain</div></div>
+                <div class="fav">☆</div>
+              </div>
+              <div class="chips">
+                <div class="chip-wide">
+                  <span class="per-l">1,779 €</span>
+                  <span class="total-l">→ 89 € le plein</span>
+                </div>
+                <span class="chip">580 m</span>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-row1">
+                <div><div class="card-name">Intermarché</div><div class="card-addr">3 av. Daumesnil</div></div>
+                <div class="fav">☆</div>
+              </div>
+              <div class="chips">
+                <div class="chip-wide">
+                  <span class="per-l">1,739 €</span>
+                  <span class="total-l">→ 87 € le plein</span>
+                </div>
+                <span class="chip">1,2 km</span>
+              </div>
+            </div>
+          </div>
+          <div class="tabbar">
+            <div class="tabitem active"><span class="ti">📍</span>Autour</div>
+            <div class="tabitem"><span class="ti">★</span>Favoris 2/5</div>
+            <div class="tabitem"><span class="ti">↕</span>Trier</div>
+          </div>
+        </div>
+      </div>
+      <div class="label">1D — Chip pill étendu</div>
+      <div class="label-sub">Prix/L en badge sombre + total en clair.<br>Très scannable, design premium.</div>
+    </div>
+
+  </div>
+
+  <!-- ════════════ SECTION 2 : SAISIE DU RÉSERVOIR ════════════ -->
+  <div class="section-title">Où saisir la capacité du réservoir ?</div>
+  <div class="grid">
+
+    <!-- Setting A : 4e tab "Réglages" -->
+    <div>
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="topbar">
+            <div class="fuel-pill">⛽ Gazole</div>
+            <div class="status">8 stations</div>
+            <div class="geo">◎</div>
+          </div>
+          <div class="body" style="padding: 12px 10px;">
+            <div style="font-size:.78rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px;">Réglages</div>
+
+            <div style="background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden;">
+              <div class="setting-row" style="padding:12px 14px;">
+                <div>
+                  <div class="setting-label">Capacité réservoir</div>
+                  <div class="setting-sub">Utilisé pour estimer le coût du plein</div>
+                </div>
+                <div class="stepper">
+                  <button class="stepper-btn">−</button>
+                  <span class="stepper-val">50 L</span>
+                  <button class="stepper-btn">+</button>
+                </div>
+              </div>
+              <div class="setting-row" style="padding:12px 14px;">
+                <div>
+                  <div class="setting-label">Afficher le coût du plein</div>
+                  <div class="setting-sub">Sur chaque carte station</div>
+                </div>
+                <div style="width:40px;height:24px;background:var(--green);border-radius:999px;display:flex;align-items:center;padding:2px;justify-content:flex-end;">
+                  <div style="width:20px;height:20px;background:#fff;border-radius:50%;"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="tabbar">
+            <div class="tabitem"><span class="ti">📍</span>Autour</div>
+            <div class="tabitem"><span class="ti">★</span>Favoris</div>
+            <div class="tabitem"><span class="ti">↕</span>Trier</div>
+            <div class="tabitem active"><span class="ti">⚙</span>Réglages</div>
+          </div>
+        </div>
+      </div>
+      <div class="label">2A — 4e onglet Réglages</div>
+      <div class="label-sub">Tab dédiée. Extensible<br>si tu ajoutes d'autres paramètres.</div>
+    </div>
+
+    <!-- Setting B : Bottom sheet depuis topbar -->
+    <div>
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="topbar">
+            <div class="fuel-pill">⛽ Gazole</div>
+            <div class="status">8 stations</div>
+            <div style="margin-left:auto;display:flex;gap:5px;align-items:center;">
+              <div style="font-size:.75rem;font-weight:800;background:rgba(15,123,99,.1);color:var(--green-dark);border:1px solid rgba(15,123,99,.2);border-radius:999px;padding:4px 10px;cursor:pointer;">⛽ 50 L</div>
+              <div class="geo">◎</div>
+            </div>
+          </div>
+          <div class="body">
+            <div class="card">
+              <div class="card-row1">
+                <div><div class="card-name">TotalEnergies</div><div class="card-addr">14 rue de Rivoli</div></div>
+                <div class="fav">☆</div>
+              </div>
+              <div class="chips">
+                <span class="chip green">1,759 €/L</span>
+                <span class="chip amber">≈ 88 € le plein</span>
+                <span class="chip">320 m</span>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-row1">
+                <div><div class="card-name">Shell</div><div class="card-addr">8 bd Saint-Germain</div></div>
+                <div class="fav">☆</div>
+              </div>
+              <div class="chips">
+                <span class="chip green">1,779 €/L</span>
+                <span class="chip amber">≈ 89 € le plein</span>
+                <span class="chip">580 m</span>
+              </div>
+            </div>
+          </div>
+          <!-- Sheet ouverte -->
+          <div class="settings-sheet">
+            <div class="sheet-handle"></div>
+            <div class="sheet-title">Réservoir</div>
+            <div class="setting-row">
+              <div>
+                <div class="setting-label">Capacité</div>
+                <div class="setting-sub">En litres</div>
+              </div>
+              <div class="stepper">
+                <button class="stepper-btn">−</button>
+                <span class="stepper-val">50 L</span>
+                <button class="stepper-btn">+</button>
+              </div>
+            </div>
+          </div>
+          <div class="tabbar">
+            <div class="tabitem active"><span class="ti">📍</span>Autour</div>
+            <div class="tabitem"><span class="ti">★</span>Favoris</div>
+            <div class="tabitem"><span class="ti">↕</span>Trier</div>
+          </div>
+        </div>
+      </div>
+      <div class="label">2B — Pill dans la topbar</div>
+      <div class="label-sub">Chip "⛽ 50 L" visible en permanence.<br>Tap → bottom sheet pour modifier.</div>
+    </div>
+
+    <!-- Setting C : inline dans topbar -->
+    <div>
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="topbar" style="flex-wrap:wrap;gap:6px;padding:8px 12px;">
+            <div class="fuel-pill">⛽ Gazole</div>
+            <div class="status">8 stations</div>
+            <div class="geo" style="margin-left:auto;">◎</div>
+          </div>
+          <div class="body">
+            <div class="card">
+              <div class="card-row1">
+                <div><div class="card-name">TotalEnergies</div><div class="card-addr">14 rue de Rivoli</div></div>
+                <div class="fav">☆</div>
+              </div>
+              <div class="chips">
+                <span class="chip green">1,759 €/L</span>
+                <span class="chip amber">≈ 88 € le plein</span>
+                <span class="chip">320 m</span>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-row1">
+                <div><div class="card-name">Shell</div><div class="card-addr">8 bd Saint-Germain</div></div>
+                <div class="fav">☆</div>
+              </div>
+              <div class="chips">
+                <span class="chip green">1,779 €/L</span>
+                <span class="chip amber">≈ 89 € le plein</span>
+                <span class="chip">580 m</span>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-row1">
+                <div><div class="card-name">Intermarché</div><div class="card-addr">3 av. Daumesnil</div></div>
+                <div class="fav">☆</div>
+              </div>
+              <div class="chips">
+                <span class="chip green">1,739 €/L</span>
+                <span class="chip amber">≈ 87 € le plein</span>
+                <span class="chip">1,2 km</span>
+              </div>
+            </div>
+          </div>
+          <!-- First-launch prompt -->
+          <div style="position:absolute;bottom:50px;left:10px;right:10px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px;box-shadow:0 8px 30px rgba(0,0,0,.15);">
+            <div style="font-weight:800;font-size:.88rem;margin-bottom:6px;">Capacité de ton réservoir ?</div>
+            <div style="font-size:.76rem;color:var(--muted);margin-bottom:10px;">Pour voir le coût du plein sur chaque station.</div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;">
+              <span style="background:#eef2ef;border-radius:999px;padding:5px 12px;font-size:.78rem;font-weight:800;">40 L</span>
+              <span style="background:#eef2ef;border-radius:999px;padding:5px 12px;font-size:.78rem;font-weight:800;">50 L</span>
+              <span style="background:var(--green);color:#fff;border-radius:999px;padding:5px 12px;font-size:.78rem;font-weight:800;">60 L</span>
+              <span style="background:#eef2ef;border-radius:999px;padding:5px 12px;font-size:.78rem;font-weight:800;">70 L</span>
+              <span style="background:#eef2ef;border-radius:999px;padding:5px 12px;font-size:.78rem;font-weight:800;">Autre…</span>
+            </div>
+          </div>
+          <div class="tabbar">
+            <div class="tabitem active"><span class="ti">📍</span>Autour</div>
+            <div class="tabitem"><span class="ti">★</span>Favoris</div>
+            <div class="tabitem"><span class="ti">↕</span>Trier</div>
+          </div>
+        </div>
+      </div>
+      <div class="label">2C — Prompt au premier lancement</div>
+      <div class="label-sub">Chips de sélection rapide (40/50/60/70L).<br>Apparaît une seule fois, mémorisé ensuite.</div>
+    </div>
+
+  </div>
+
+</body>
+</html>

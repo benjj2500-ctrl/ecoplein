@@ -31,6 +31,8 @@ const state = {
   brands: {},
   isBrandLookupRunning: false,
   isLoading: true,
+  settingsOpen: false,
+  tankCapacity: readTankCapacity(),
 };
 
 const elements = {
@@ -38,10 +40,15 @@ const elements = {
   fuelSelect: document.querySelector("#fuelSelect"),
   locateButton: document.querySelector("#locateButton"),
   stationList: document.querySelector("#stationList"),
+  settingsPanel: document.querySelector("#settingsPanel"),
   favoriteCount: document.querySelector("#favoriteCount"),
   stationTemplate: document.querySelector("#stationTemplate"),
   sortTab: document.querySelector("#sortTab"),
   sortTabLabel: document.querySelector("#sortTabLabel"),
+  settingsTabBtn: document.querySelector("#settingsTabBtn"),
+  tankDecBtn: document.querySelector("#tankDecBtn"),
+  tankIncBtn: document.querySelector("#tankIncBtn"),
+  tankVal: document.querySelector("#tankVal"),
   viewButtons: document.querySelectorAll("[data-view]"),
 };
 
@@ -65,13 +72,36 @@ function bindEvents() {
   elements.locateButton.addEventListener("click", locateUser);
 
   elements.sortTab.addEventListener("click", () => {
+    state.settingsOpen = false;
     cycleAllSorts();
     writeUrlState("push");
     render();
   });
 
+  elements.settingsTabBtn.addEventListener("click", () => {
+    state.settingsOpen = !state.settingsOpen;
+    render();
+  });
+
+  elements.tankDecBtn.addEventListener("click", () => {
+    if (state.tankCapacity >= 5) {
+      state.tankCapacity -= 5;
+      saveTankCapacity(state.tankCapacity);
+      render();
+    }
+  });
+
+  elements.tankIncBtn.addEventListener("click", () => {
+    if (state.tankCapacity <= 195) {
+      state.tankCapacity += 5;
+      saveTankCapacity(state.tankCapacity);
+      render();
+    }
+  });
+
   elements.viewButtons.forEach((button) => {
     button.addEventListener("click", () => {
+      state.settingsOpen = false;
       state.view = button.dataset.view;
       writeUrlState("push");
       loadStations();
@@ -228,6 +258,15 @@ function render() {
   syncControlsFromState();
   updateFavoriteCount();
 
+  if (state.settingsOpen) {
+    elements.stationList.hidden = true;
+    elements.settingsPanel.hidden = false;
+    return;
+  }
+
+  elements.stationList.hidden = false;
+  elements.settingsPanel.hidden = true;
+
   if (state.isLoading) {
     showEmpty("Chargement des stations...");
     return;
@@ -316,7 +355,14 @@ function renderStation(station) {
   );
   favoriteButton.addEventListener("click", () => toggleFavorite(station.id));
 
-  price.textContent = `${state.selectedFuel} ${formatPrice(station.price.value)}`;
+  if (state.tankCapacity > 0) {
+    const total = station.price.value * state.tankCapacity;
+    price.classList.add("stacked");
+    price.innerHTML = `<span class="price-per-l">${state.selectedFuel} ${formatPrice(station.price.value)}</span><span class="price-plein">Plein ≈ ${formatEuros(total)}</span>`;
+  } else {
+    price.classList.remove("stacked");
+    price.textContent = `${state.selectedFuel} ${formatPrice(station.price.value)}`;
+  }
   distance.textContent = `${formatDistance(station.distance)}`;
   update.textContent = station.price.updatedAt
     ? `MAJ ${formatUpdateDate(station.price.updatedAt)}`
@@ -384,6 +430,15 @@ function toggleFavorite(stationId) {
   render();
 }
 
+function readTankCapacity() {
+  const val = parseInt(localStorage.getItem("ecoplein:tank") || "0", 10);
+  return Number.isFinite(val) && val >= 0 ? val : 0;
+}
+
+function saveTankCapacity(val) {
+  localStorage.setItem("ecoplein:tank", String(val));
+}
+
 function readFavorites() {
   try {
     const parsed = JSON.parse(localStorage.getItem(FAVORITES_KEY) || "[]");
@@ -419,11 +474,17 @@ function syncControlsFromState() {
 
   const sortLabel = getSortTabLabel();
   elements.sortTabLabel.textContent = sortLabel;
-  elements.sortTab.classList.toggle("active", state.sortBy !== "none");
+  elements.sortTab.classList.toggle("active", state.sortBy !== "none" && !state.settingsOpen);
+  elements.settingsTabBtn.classList.toggle("active", state.settingsOpen);
 
   elements.viewButtons.forEach((button) => {
-    button.classList.toggle("active", button.dataset.view === state.view);
+    button.classList.toggle("active", button.dataset.view === state.view && !state.settingsOpen);
   });
+
+  const cap = state.tankCapacity;
+  elements.tankVal.textContent = cap > 0 ? `${cap} L` : "— L";
+  elements.tankDecBtn.disabled = cap <= 0;
+  elements.tankIncBtn.disabled = cap >= 200;
 }
 
 function getSortTabLabel() {
@@ -572,6 +633,14 @@ function formatDistance(value) {
   return `${value.toLocaleString("fr-FR", {
     maximumFractionDigits: 1,
   })} km`;
+}
+
+function formatEuros(value) {
+  return new Intl.NumberFormat("fr-FR", {
+    style: "currency",
+    currency: "EUR",
+    maximumFractionDigits: 0,
+  }).format(value);
 }
 
 function formatUpdateDate(value) {

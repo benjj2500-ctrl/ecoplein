@@ -32,6 +32,23 @@
 
     <main class="app-shell">
       <section class="station-list" id="stationList" aria-label="Stations"></section>
+
+      <section class="settings-panel" id="settingsPanel" hidden>
+        <div class="settings-group">
+          <div class="settings-row">
+            <div class="settings-info">
+              <div class="settings-label">Capacité réservoir</div>
+              <div class="settings-sub">Utilisé pour estimer le coût du plein sur chaque station</div>
+            </div>
+            <div class="stepper">
+              <button class="stepper-btn" id="tankDecBtn" type="button" aria-label="Diminuer">−</button>
+              <span class="stepper-val" id="tankVal">— L</span>
+              <button class="stepper-btn" id="tankIncBtn" type="button" aria-label="Augmenter">+</button>
+            </div>
+          </div>
+        </div>
+        <p class="settings-hint">Par paliers de 5 L. Mis à zéro pour désactiver l'estimation.</p>
+      </section>
     </main>
 
     <nav class="tabbar" aria-label="Navigation">
@@ -46,6 +63,10 @@
       <button class="tabitem" type="button" id="sortTab">
         <span class="tab-icon" aria-hidden="true">↕</span>
         <span id="sortTabLabel">Trier</span>
+      </button>
+      <button class="tabitem" type="button" id="settingsTabBtn">
+        <span class="tab-icon" aria-hidden="true">⚙</span>
+        <span>Réglages</span>
       </button>
     </nav>
 

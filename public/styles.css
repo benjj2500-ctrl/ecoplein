@@ -268,6 +268,28 @@ select {
   color: var(--green-dark);
 }
 
+.price-chip.stacked {
+  flex-direction: column;
+  align-items: flex-start;
+  border-radius: 10px;
+  gap: 2px;
+  padding: 6px 10px;
+  white-space: normal;
+}
+
+.price-chip .price-per-l {
+  font-size: 0.82rem;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.price-chip .price-plein {
+  font-size: 0.72rem;
+  font-weight: 700;
+  opacity: 0.78;
+  line-height: 1.2;
+}
+
 .empty-state {
   grid-column: 1 / -1;
   border: 1px dashed var(--line);
@@ -277,6 +299,88 @@ select {
   color: var(--muted);
   background: rgba(255, 255, 255, 0.58);
   font-size: 0.92rem;
+}
+
+/* ── Settings panel ── */
+
+.settings-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.settings-group {
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.settings-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px;
+}
+
+.settings-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.settings-label {
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.settings-sub {
+  margin-top: 3px;
+  font-size: 0.78rem;
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+.stepper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.stepper-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: #fff;
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.stepper-btn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.stepper-val {
+  font-size: 0.92rem;
+  font-weight: 800;
+  min-width: 44px;
+  text-align: center;
+}
+
+.settings-hint {
+  font-size: 0.76rem;
+  color: var(--muted);
+  padding: 0 4px;
+  line-height: 1.5;
 }
 
 /* ── Pull to refresh ── */
