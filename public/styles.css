@@ -208,6 +208,11 @@ select {
   min-width: 0;
 }
 
+.station-main > div {
+  flex: 1;
+  min-width: 0;
+}
+
 .station-card h2 {
   margin: 0;
   font-size: 1.02rem;
