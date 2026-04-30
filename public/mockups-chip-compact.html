@@ -1,0 +1,337 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Mockups — Chip compact</title>
+  <style>
+    :root {
+      --bg: #f6f7f4; --ink: #1d2623; --muted: #68746f; --line: #d9ded7;
+      --green: #0f7b63; --green-dark: #0b5f4d; --coral: #d85f47;
+      --shadow: 0 8px 24px rgba(30,42,38,.10);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #e8ebe7; padding: 32px 16px 64px; color: var(--ink); }
+
+    h1.pt { text-align:center; font-size:1rem; font-weight:800; color:var(--muted);
+      letter-spacing:.06em; text-transform:uppercase; margin-bottom:6px; }
+    .ps { text-align:center; font-size:.84rem; color:var(--muted); margin-bottom:36px; }
+
+    .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(285px,1fr));
+      gap:28px; max-width:1200px; margin:0 auto; }
+
+    /* iPhone */
+    .phone { background:#1a1a1a; border-radius:44px; padding:14px;
+      box-shadow:0 24px 60px rgba(0,0,0,.35), inset 0 0 0 1px #333;
+      max-width:310px; margin:0 auto; }
+    .screen { background:var(--bg); border-radius:32px; overflow:hidden;
+      position:relative; min-height:500px; }
+    .screen::before { content:''; display:block; width:88px; height:25px;
+      background:#1a1a1a; border-radius:0 0 16px 16px; margin:0 auto; }
+    .lbl { text-align:center; margin-top:14px; font-weight:800; font-size:.94rem; }
+    .lbl-sub { text-align:center; margin-top:4px; font-size:.8rem; color:var(--muted);
+      line-height:1.4; padding:0 8px; }
+
+    /* topbar */
+    .tb { display:flex; align-items:center; gap:7px; padding:7px 11px;
+      background:rgba(255,255,255,.95); border-bottom:1px solid var(--line); }
+    .fp { display:flex; align-items:center; gap:5px; background:var(--ink); color:#fff;
+      border-radius:999px; padding:4px 11px; font-size:.8rem; font-weight:800; }
+    .sp { font-size:.72rem; font-weight:700; color:var(--green-dark);
+      background:rgba(15,123,99,.1); border:1px solid rgba(15,123,99,.2);
+      border-radius:999px; padding:3px 9px; }
+    .geo { margin-left:auto; width:30px; height:30px; background:#fff;
+      border:1px solid var(--line); border-radius:50%; display:flex;
+      align-items:center; justify-content:center; font-size:.9rem; }
+
+    /* tabbar */
+    .bar { position:absolute; bottom:0; left:0; right:0; display:flex;
+      background:rgba(255,255,255,.97); border-top:1px solid var(--line); }
+    .ti { flex:1; display:flex; flex-direction:column; align-items:center;
+      padding:6px 3px 8px; font-size:.65rem; font-weight:700; color:var(--muted); gap:2px; }
+    .ti .ic { font-size:1rem; }
+    .ti.on { color:var(--green); }
+
+    /* card base */
+    .card { background:#fff; border:1px solid var(--line); border-radius:10px;
+      padding:11px 13px; box-shadow:var(--shadow); margin:7px 9px 0; }
+    .cr1 { display:flex; justify-content:space-between; align-items:flex-start; }
+    .cn { font-weight:800; font-size:.88rem; }
+    .ca { font-size:.72rem; color:var(--muted); margin-top:2px; }
+    .fv { width:30px; height:30px; border:1px solid var(--line); border-radius:7px;
+      background:#fff; display:flex; align-items:center; justify-content:center;
+      color:var(--coral); font-size:.95rem; flex-shrink:0; }
+    .chips { display:flex; gap:5px; flex-wrap:wrap; margin-top:7px; align-items:center; }
+    .chip { font-size:.73rem; font-weight:800; padding:3px 9px; border-radius:999px;
+      background:#eef2ef; color:var(--muted); white-space:nowrap; }
+    .chip.g { background:rgba(15,123,99,.12); color:var(--green-dark); }
+
+    /* body scroll */
+    .body { padding:0 0 52px; }
+
+    /* ── Option A : un seul chip avec séparateur ── */
+    .chip-a {
+      display:inline-flex; align-items:center; gap:0;
+      background:rgba(15,123,99,.12); border-radius:999px;
+      padding:3px 10px; white-space:nowrap;
+    }
+    .chip-a .v1 { font-size:.73rem; font-weight:800; color:var(--green-dark); }
+    .chip-a .sep { margin:0 5px; color:rgba(11,95,77,.35); font-size:.7rem; }
+    .chip-a .v2 { font-size:.73rem; font-weight:700; color:var(--green-dark); }
+
+    /* ── Option B : deux chips côte à côte ── */
+    .chip-b1 {
+      display:inline-flex; align-items:center;
+      background:rgba(15,123,99,.12); border-radius:999px;
+      padding:3px 9px; white-space:nowrap;
+      font-size:.73rem; font-weight:800; color:var(--green-dark);
+    }
+    .chip-b2 {
+      display:inline-flex; align-items:center; gap:3px;
+      background:rgba(180,120,0,.1); border-radius:999px;
+      padding:3px 9px; white-space:nowrap;
+      font-size:.73rem; font-weight:800; color:#7a5200;
+    }
+
+    /* ── Option C : pill étendu prix → plein ── */
+    .chip-c {
+      display:inline-flex; align-items:center; gap:0;
+      border-radius:999px; overflow:hidden;
+      border:1px solid rgba(15,123,99,.2);
+      white-space:nowrap;
+    }
+    .chip-c .left {
+      background:var(--green); color:#fff;
+      padding:3px 9px; font-size:.73rem; font-weight:800;
+    }
+    .chip-c .right {
+      background:rgba(15,123,99,.1); color:var(--green-dark);
+      padding:3px 9px; font-size:.73rem; font-weight:700;
+    }
+
+    /* ── Option D : compact avec icône réservoir ── */
+    .chip-d {
+      display:inline-flex; align-items:center; gap:4px;
+      background:rgba(15,123,99,.12); border-radius:999px;
+      padding:3px 10px; white-space:nowrap;
+    }
+    .chip-d .price { font-size:.73rem; font-weight:800; color:var(--green-dark); }
+    .chip-d .tank  { font-size:.68rem; font-weight:700; color:var(--green-dark);
+      opacity:.72; border-left:1px solid rgba(11,95,77,.25); padding-left:6px; }
+
+    /* Settings collapsed */
+    .s-row-compact {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:11px 13px; margin:7px 9px 0;
+      background:#fff; border:1px solid var(--line); border-radius:10px;
+      box-shadow:var(--shadow);
+    }
+    .s-label { font-size:.82rem; font-weight:700; }
+    .s-val { font-size:.82rem; font-weight:800; color:var(--green-dark); }
+    .s-edit { font-size:.72rem; font-weight:700; color:var(--muted);
+      background:#eef2ef; border-radius:999px; padding:3px 9px; }
+  </style>
+</head>
+<body>
+  <h1 class="pt">Chip compact — 4 propositions</h1>
+  <p class="ps">Objectif : prix/L + coût du plein sur une seule ligne avec les autres tags</p>
+
+  <div class="grid">
+
+    <!-- ═══ A : chip fusionné avec · ═══ -->
+    <div>
+      <div class="phone"><div class="screen">
+        <div class="tb"><div class="fp">⛽ Gazole</div><div class="sp">8 stations</div><div class="geo">◎</div></div>
+        <div class="body">
+          <div class="card">
+            <div class="cr1"><div><div class="cn">TotalEnergies</div><div class="ca">14 rue de Rivoli, Paris</div></div><div class="fv">☆</div></div>
+            <div class="chips">
+              <div class="chip-a"><span class="v1">1,759 €/L</span><span class="sep">·</span><span class="v2">~88 €</span></div>
+              <span class="chip">320 m</span>
+              <span class="chip">MAJ 14:29</span>
+            </div>
+          </div>
+          <div class="card">
+            <div class="cr1"><div><div class="cn">Shell</div><div class="ca">8 bd Saint-Germain</div></div><div class="fv">☆</div></div>
+            <div class="chips">
+              <div class="chip-a"><span class="v1">1,779 €/L</span><span class="sep">·</span><span class="v2">~89 €</span></div>
+              <span class="chip">580 m</span>
+              <span class="chip">MAJ 14:10</span>
+            </div>
+          </div>
+          <div class="card">
+            <div class="cr1"><div><div class="cn">Intermarché</div><div class="ca">3 av. Daumesnil</div></div><div class="fv">☆</div></div>
+            <div class="chips">
+              <div class="chip-a"><span class="v1">1,739 €/L</span><span class="sep">·</span><span class="v2">~87 €</span></div>
+              <span class="chip">1,2 km</span>
+              <span class="chip">MAJ 13:55</span>
+            </div>
+          </div>
+        </div>
+        <div class="bar">
+          <div class="ti on"><span class="ic">📍</span>Autour</div>
+          <div class="ti"><span class="ic">★</span>Favoris</div>
+          <div class="ti"><span class="ic">↕</span>Trier</div>
+          <div class="ti"><span class="ic">⚙</span>Réglages</div>
+        </div>
+      </div></div>
+      <div class="lbl">A — Chip fusionné "·"</div>
+      <div class="lbl-sub">Un seul chip vert.<br>1,759 €/L · ~88 €</div>
+    </div>
+
+    <!-- ═══ B : deux chips côte à côte ═══ -->
+    <div>
+      <div class="phone"><div class="screen">
+        <div class="tb"><div class="fp">⛽ Gazole</div><div class="sp">8 stations</div><div class="geo">◎</div></div>
+        <div class="body">
+          <div class="card">
+            <div class="cr1"><div><div class="cn">TotalEnergies</div><div class="ca">14 rue de Rivoli, Paris</div></div><div class="fv">☆</div></div>
+            <div class="chips">
+              <span class="chip-b1">1,759 €/L</span>
+              <span class="chip-b2">⛽ ~88 €</span>
+              <span class="chip">320 m</span>
+              <span class="chip">MAJ 14:29</span>
+            </div>
+          </div>
+          <div class="card">
+            <div class="cr1"><div><div class="cn">Shell</div><div class="ca">8 bd Saint-Germain</div></div><div class="fv">☆</div></div>
+            <div class="chips">
+              <span class="chip-b1">1,779 €/L</span>
+              <span class="chip-b2">⛽ ~89 €</span>
+              <span class="chip">580 m</span>
+              <span class="chip">MAJ 14:10</span>
+            </div>
+          </div>
+          <div class="card">
+            <div class="cr1"><div><div class="cn">Intermarché</div><div class="ca">3 av. Daumesnil</div></div><div class="fv">☆</div></div>
+            <div class="chips">
+              <span class="chip-b1">1,739 €/L</span>
+              <span class="chip-b2">⛽ ~87 €</span>
+              <span class="chip">1,2 km</span>
+              <span class="chip">MAJ 13:55</span>
+            </div>
+          </div>
+        </div>
+        <div class="bar">
+          <div class="ti on"><span class="ic">📍</span>Autour</div>
+          <div class="ti"><span class="ic">★</span>Favoris</div>
+          <div class="ti"><span class="ic">↕</span>Trier</div>
+          <div class="ti"><span class="ic">⚙</span>Réglages</div>
+        </div>
+      </div></div>
+      <div class="lbl">B — 2 chips distincts</div>
+      <div class="lbl-sub">Vert pour le prix, ambre pour le plein.<br>Différenciation rapide.</div>
+    </div>
+
+    <!-- ═══ C : pill bicolore prix → plein ═══ -->
+    <div>
+      <div class="phone"><div class="screen">
+        <div class="tb"><div class="fp">⛽ Gazole</div><div class="sp">8 stations</div><div class="geo">◎</div></div>
+        <div class="body">
+          <div class="card">
+            <div class="cr1"><div><div class="cn">TotalEnergies</div><div class="ca">14 rue de Rivoli, Paris</div></div><div class="fv">☆</div></div>
+            <div class="chips">
+              <div class="chip-c"><span class="left">1,759 €/L</span><span class="right">~88 € plein</span></div>
+              <span class="chip">320 m</span>
+              <span class="chip">MAJ 14:29</span>
+            </div>
+          </div>
+          <div class="card">
+            <div class="cr1"><div><div class="cn">Shell</div><div class="ca">8 bd Saint-Germain</div></div><div class="fv">☆</div></div>
+            <div class="chips">
+              <div class="chip-c"><span class="left">1,779 €/L</span><span class="right">~89 € plein</span></div>
+              <span class="chip">580 m</span>
+              <span class="chip">MAJ 14:10</span>
+            </div>
+          </div>
+          <div class="card">
+            <div class="cr1"><div><div class="cn">Intermarché</div><div class="ca">3 av. Daumesnil</div></div><div class="fv">☆</div></div>
+            <div class="chips">
+              <div class="chip-c"><span class="left">1,739 €/L</span><span class="right">~87 € plein</span></div>
+              <span class="chip">1,2 km</span>
+              <span class="chip">MAJ 13:55</span>
+            </div>
+          </div>
+        </div>
+        <div class="bar">
+          <div class="ti on"><span class="ic">📍</span>Autour</div>
+          <div class="ti"><span class="ic">★</span>Favoris</div>
+          <div class="ti"><span class="ic">↕</span>Trier</div>
+          <div class="ti"><span class="ic">⚙</span>Réglages</div>
+        </div>
+      </div></div>
+      <div class="lbl">C — Pill bicolore</div>
+      <div class="lbl-sub">Badge vert foncé + fond clair.<br>Hiérarchie claire en un coup d'œil.</div>
+    </div>
+
+    <!-- ═══ D : chip avec séparateur | ═══ -->
+    <div>
+      <div class="phone"><div class="screen">
+        <div class="tb"><div class="fp">⛽ Gazole</div><div class="sp">8 stations</div><div class="geo">◎</div></div>
+        <div class="body">
+          <div class="card">
+            <div class="cr1"><div><div class="cn">TotalEnergies</div><div class="ca">14 rue de Rivoli, Paris</div></div><div class="fv">☆</div></div>
+            <div class="chips">
+              <div class="chip-d"><span class="price">Gazole 1,759 €/L</span><span class="tank">~88 € plein</span></div>
+              <span class="chip">320 m</span>
+            </div>
+          </div>
+          <div class="card">
+            <div class="cr1"><div><div class="cn">Shell</div><div class="ca">8 bd Saint-Germain</div></div><div class="fv">☆</div></div>
+            <div class="chips">
+              <div class="chip-d"><span class="price">Gazole 1,779 €/L</span><span class="tank">~89 € plein</span></div>
+              <span class="chip">580 m</span>
+            </div>
+          </div>
+          <div class="card">
+            <div class="cr1"><div><div class="cn">Intermarché</div><div class="ca">3 av. Daumesnil</div></div><div class="fv">☆</div></div>
+            <div class="chips">
+              <div class="chip-d"><span class="price">Gazole 1,739 €/L</span><span class="tank">~87 € plein</span></div>
+              <span class="chip">1,2 km</span>
+            </div>
+          </div>
+        </div>
+        <div class="bar">
+          <div class="ti on"><span class="ic">📍</span>Autour</div>
+          <div class="ti"><span class="ic">★</span>Favoris</div>
+          <div class="ti"><span class="ic">↕</span>Trier</div>
+          <div class="ti"><span class="ic">⚙</span>Réglages</div>
+        </div>
+      </div></div>
+      <div class="lbl">D — Un chip avec séparateur |</div>
+      <div class="lbl-sub">Tout en vert, prix + plein séparés<br>par une barre verticale subtile.</div>
+    </div>
+
+  </div>
+
+  <!-- Réglages collapsé -->
+  <p style="text-align:center;font-size:.8rem;font-weight:800;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin:48px 0 20px;">Réglages — réservoir collapsé une fois défini</p>
+  <div style="max-width:310px;margin:0 auto;">
+    <div class="phone"><div class="screen">
+      <div class="tb"><div class="fp">⛽ Gazole</div><div class="sp">8 stations</div><div class="geo">◎</div></div>
+      <div style="padding:12px 9px 52px;">
+        <div style="font-size:.74rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;padding:0 4px;">Réglages</div>
+        <!-- collapsed row -->
+        <div class="s-row-compact">
+          <div>
+            <div class="s-label">Réservoir</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span class="s-val">50 L</span>
+            <span class="s-edit">✎ Modifier</span>
+          </div>
+        </div>
+        <p style="font-size:.72rem;color:var(--muted);margin-top:6px;padding:0 4px;line-height:1.5;">Tap "Modifier" pour changer la capacité.</p>
+      </div>
+      <div class="bar">
+        <div class="ti"><span class="ic">📍</span>Autour</div>
+        <div class="ti"><span class="ic">★</span>Favoris</div>
+        <div class="ti"><span class="ic">↕</span>Trier</div>
+        <div class="ti on"><span class="ic">⚙</span>Réglages</div>
+      </div>
+    </div></div>
+  </div>
+
+</body>
+</html>

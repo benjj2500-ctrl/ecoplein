@@ -32,6 +32,7 @@ const state = {
   isBrandLookupRunning: false,
   isLoading: true,
   settingsOpen: false,
+  tankEditing: false,
   tankCapacity: readTankCapacity(),
 };
 
@@ -49,6 +50,11 @@ const elements = {
   tankDecBtn: document.querySelector("#tankDecBtn"),
   tankIncBtn: document.querySelector("#tankIncBtn"),
   tankVal: document.querySelector("#tankVal"),
+  tankCollapsedRow: document.querySelector("#tankCollapsedRow"),
+  tankCollapsedVal: document.querySelector("#tankCollapsedVal"),
+  tankStepperRow: document.querySelector("#tankStepperRow"),
+  tankEditBtn: document.querySelector("#tankEditBtn"),
+  settingsHint: document.querySelector("#settingsHint"),
   viewButtons: document.querySelectorAll("[data-view]"),
 };
 
@@ -80,6 +86,7 @@ function bindEvents() {
 
   elements.settingsTabBtn.addEventListener("click", () => {
     state.settingsOpen = !state.settingsOpen;
+    if (!state.settingsOpen) state.tankEditing = false;
     render();
   });
 
@@ -99,9 +106,15 @@ function bindEvents() {
     }
   });
 
+  elements.tankEditBtn.addEventListener("click", () => {
+    state.tankEditing = true;
+    syncControlsFromState();
+  });
+
   elements.viewButtons.forEach((button) => {
     button.addEventListener("click", () => {
       state.settingsOpen = false;
+      state.tankEditing = false;
       state.view = button.dataset.view;
       writeUrlState("push");
       loadStations();
@@ -357,10 +370,8 @@ function renderStation(station) {
 
   if (state.tankCapacity > 0) {
     const total = station.price.value * state.tankCapacity;
-    price.classList.add("stacked");
-    price.innerHTML = `<span class="price-per-l">${state.selectedFuel} ${formatPrice(station.price.value)}</span><span class="price-plein">Plein ≈ ${formatEuros(total)}</span>`;
+    price.textContent = `${state.selectedFuel} ${formatPrice(station.price.value)} · ~${formatEuros(total)}`;
   } else {
-    price.classList.remove("stacked");
     price.textContent = `${state.selectedFuel} ${formatPrice(station.price.value)}`;
   }
   distance.textContent = `${formatDistance(station.distance)}`;
@@ -482,6 +493,11 @@ function syncControlsFromState() {
   });
 
   const cap = state.tankCapacity;
+  const showCollapsed = cap > 0 && !state.tankEditing;
+  elements.tankCollapsedRow.hidden = !showCollapsed;
+  elements.tankStepperRow.hidden = showCollapsed;
+  elements.settingsHint.hidden = showCollapsed;
+  elements.tankCollapsedVal.textContent = `${cap} L`;
   elements.tankVal.textContent = cap > 0 ? `${cap} L` : "— L";
   elements.tankDecBtn.disabled = cap <= 0;
   elements.tankIncBtn.disabled = cap >= 200;

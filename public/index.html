@@ -35,7 +35,16 @@
 
       <section class="settings-panel" id="settingsPanel" hidden>
         <div class="settings-group">
-          <div class="settings-row">
+          <div class="settings-row" id="tankCollapsedRow" hidden>
+            <div class="settings-info">
+              <div class="settings-label">Réservoir</div>
+            </div>
+            <div class="tank-collapsed-summary">
+              <span class="tank-collapsed-val" id="tankCollapsedVal"></span>
+              <button class="tank-edit-btn" id="tankEditBtn" type="button">✎ Modifier</button>
+            </div>
+          </div>
+          <div class="settings-row" id="tankStepperRow">
             <div class="settings-info">
               <div class="settings-label">Capacité réservoir</div>
               <div class="settings-sub">Utilisé pour estimer le coût du plein sur chaque station</div>
@@ -47,7 +56,7 @@
             </div>
           </div>
         </div>
-        <p class="settings-hint">Par paliers de 5 L. Mis à zéro pour désactiver l'estimation.</p>
+        <p class="settings-hint" id="settingsHint">Par paliers de 5 L. Mis à zéro pour désactiver l'estimation.</p>
       </section>
     </main>
 

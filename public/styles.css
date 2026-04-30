@@ -277,17 +277,32 @@ select {
   white-space: normal;
 }
 
-.price-chip .price-per-l {
-  font-size: 0.82rem;
-  font-weight: 800;
-  line-height: 1.2;
+.tank-collapsed-summary {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
 }
 
-.price-chip .price-plein {
-  font-size: 0.72rem;
+.tank-collapsed-val {
+  font-size: 0.92rem;
+  font-weight: 800;
+  color: var(--green-dark);
+}
+
+.tank-edit-btn {
+  border: 1px solid var(--line);
+  background: #fff;
+  border-radius: 8px;
+  padding: 5px 12px;
+  font-size: 0.8rem;
   font-weight: 700;
-  opacity: 0.78;
-  line-height: 1.2;
+  color: var(--muted);
+  transition: background 0.15s;
+}
+
+.tank-edit-btn:active {
+  background: #eef2ef;
 }
 
 .empty-state {
