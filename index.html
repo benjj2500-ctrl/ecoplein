@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Prix carburants autour de moi</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="topbar" aria-label="Recherche carburant">
+        <div>
+          <p class="eyebrow">Open data gouvernemental</p>
+          <h1>Prix carburants autour de moi</h1>
+        </div>
+        <div class="status-pill" id="dataStatus">Chargement du flux</div>
+      </section>
+
+      <section class="controls" aria-label="Paramètres de recherche">
+        <div class="control-block fuel-block">
+          <label for="fuelSelect">Carburant</label>
+          <select id="fuelSelect">
+            <option value="Gazole">Gazole</option>
+            <option value="E10">E10</option>
+            <option value="SP95">SP95</option>
+            <option value="SP98">SP98</option>
+            <option value="E85">E85</option>
+            <option value="GPLc">GPLc</option>
+          </select>
+        </div>
+
+        <div class="control-block">
+          <span>Trier par</span>
+          <div class="sort-controls" role="group" aria-label="Tri">
+            <button class="sort-toggle-button" type="button" data-sort-toggle="distance">
+              <span>Distance</span>
+              <span class="sort-arrow" aria-hidden="true">-</span>
+            </button>
+            <button class="sort-toggle-button" type="button" data-sort-toggle="price">
+              <span>Prix</span>
+              <span class="sort-arrow" aria-hidden="true">-</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="control-block view-block">
+          <span>Vue</span>
+          <nav class="view-tabs" aria-label="Vues">
+            <button class="active" type="button" data-view="nearby">Autour</button>
+            <button type="button" data-view="favorites">Favoris <span id="favoriteCount">0/5</span></button>
+          </nav>
+        </div>
+
+        <button class="locate-button" type="button" id="locateButton">
+          <span aria-hidden="true">◎</span>
+          Me géolocaliser
+        </button>
+      </section>
+
+      <section class="summary-band" aria-live="polite">
+        <div>
+          <strong id="summaryTitle">Recherche en cours</strong>
+          <span id="summaryText">Autorise la localisation pour voir les 10 stations les plus proches.</span>
+        </div>
+        <button type="button" id="refreshButton">Rafraîchir</button>
+      </section>
+
+      <section class="station-list" id="stationList" aria-label="Stations"></section>
+    </main>
+
+    <template id="stationTemplate">
+      <article class="station-card">
+        <div class="station-main">
+          <div>
+            <h2></h2>
+            <p class="station-address"></p>
+          </div>
+          <button class="favorite-button" type="button" aria-label="Ajouter aux favoris">☆</button>
+        </div>
+        <div class="station-meta">
+          <span class="price-chip"></span>
+          <span class="distance-chip"></span>
+          <span class="update-chip"></span>
+        </div>
+      </article>
+    </template>
+
+    <script src="/app.js" type="module"></script>
+  </body>
+</html>
