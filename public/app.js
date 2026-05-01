@@ -31,7 +31,6 @@ const state = {
   brands: {},
   isBrandLookupRunning: false,
   isLoading: true,
-  settingsOpen: false,
   tankEditing: false,
   tankCapacity: readTankCapacity(),
 };
@@ -78,15 +77,17 @@ function bindEvents() {
   elements.locateButton.addEventListener("click", locateUser);
 
   elements.sortTab.addEventListener("click", () => {
-    state.settingsOpen = false;
+    if (state.view === "settings") {
+      state.view = "nearby";
+      state.tankEditing = false;
+    }
     cycleAllSorts();
     writeUrlState("push");
     render();
   });
 
   elements.settingsTabBtn.addEventListener("click", () => {
-    state.settingsOpen = !state.settingsOpen;
-    if (!state.settingsOpen) state.tankEditing = false;
+    state.view = "settings";
     render();
   });
 
@@ -113,7 +114,6 @@ function bindEvents() {
 
   elements.viewButtons.forEach((button) => {
     button.addEventListener("click", () => {
-      state.settingsOpen = false;
       state.tankEditing = false;
       state.view = button.dataset.view;
       writeUrlState("push");
@@ -271,7 +271,7 @@ function render() {
   syncControlsFromState();
   updateFavoriteCount();
 
-  if (state.settingsOpen) {
+  if (state.view === "settings") {
     elements.stationList.hidden = true;
     elements.settingsPanel.hidden = false;
     return;
@@ -485,11 +485,11 @@ function syncControlsFromState() {
 
   const sortLabel = getSortTabLabel();
   elements.sortTabLabel.textContent = sortLabel;
-  elements.sortTab.classList.toggle("active", state.sortBy !== "none" && !state.settingsOpen);
-  elements.settingsTabBtn.classList.toggle("active", state.settingsOpen);
+  elements.sortTab.classList.toggle("active", state.sortBy !== "none" && state.view !== "settings");
+  elements.settingsTabBtn.classList.toggle("active", state.view === "settings");
 
   elements.viewButtons.forEach((button) => {
-    button.classList.toggle("active", button.dataset.view === state.view && !state.settingsOpen);
+    button.classList.toggle("active", button.dataset.view === state.view);
   });
 
   const cap = state.tankCapacity;
@@ -570,7 +570,9 @@ function writeUrlState(mode = "replace") {
   } else {
     params.set("ordre", ORDER_QUERY_VALUES[state.sortOrder]);
   }
-  params.set("vue", VIEW_QUERY_VALUES[state.view]);
+  if (state.view !== "settings") {
+    params.set("vue", VIEW_QUERY_VALUES[state.view]);
+  }
   params.delete("fuel");
   params.delete("sort");
   params.delete("order");
