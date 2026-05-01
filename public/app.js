@@ -56,10 +56,12 @@ const elements = {
   tankStepperRow: document.querySelector("#tankStepperRow"),
   tankEditBtn: document.querySelector("#tankEditBtn"),
   settingsHint: document.querySelector("#settingsHint"),
-  changelogHeader: document.querySelector("#changelogHeader"),
-  changelogList: document.querySelector("#changelogList"),
   versionBadge: document.querySelector("#versionBadge"),
-  versionSha: document.querySelector("#versionSha"),
+  versionBtn: document.querySelector("#versionBtn"),
+  changelogSheet: document.querySelector("#changelogSheet"),
+  changelogBackdrop: document.querySelector("#changelogBackdrop"),
+  changelogClose: document.querySelector("#changelogClose"),
+  changelogList: document.querySelector("#changelogList"),
   viewButtons: document.querySelectorAll("[data-view]"),
 };
 
@@ -95,8 +97,12 @@ function bindEvents() {
   elements.settingsTabBtn.addEventListener("click", () => {
     state.view = "settings";
     render();
-    loadChangelog();
+    fetchVersionBadge();
   });
+
+  elements.versionBtn.addEventListener("click", openChangelog);
+  elements.changelogClose.addEventListener("click", closeChangelog);
+  elements.changelogBackdrop.addEventListener("click", closeChangelog);
 
   elements.tankDecBtn.addEventListener("click", () => {
     if (state.tankCapacity >= 5) {
@@ -682,52 +688,58 @@ function formatUpdateDate(value) {
   }).format(date);
 }
 
-async function loadChangelog() {
+// Fetch version silently to populate the badge when entering settings
+async function fetchVersionBadge() {
   if (versionCache) {
-    renderChangelog(versionCache);
+    elements.versionBadge.textContent = versionCache.version;
     return;
   }
-
-  // Show loading placeholder
-  elements.changelogHeader.hidden = true;
-  elements.changelogList.hidden = false;
-  elements.changelogList.innerHTML = '<li class="changelog-loading">Chargement de l\'historique…</li>';
-
   try {
     const res = await fetch("/api/version");
     if (!res.ok) throw new Error("unavailable");
-    const data = await res.json();
-    versionCache = data;
-    renderChangelog(data);
+    versionCache = await res.json();
+    elements.versionBadge.textContent = versionCache.version;
   } catch {
-    elements.changelogList.innerHTML = '<li class="changelog-loading">Historique indisponible</li>';
+    // badge stays at "—"
   }
 }
 
-function renderChangelog(data) {
-  // Version badge
-  elements.versionBadge.textContent = data.version;
-  elements.versionSha.textContent = `· ${data.sha}`;
-  elements.changelogHeader.hidden = false;
+function openChangelog() {
+  elements.changelogSheet.hidden = false;
+  document.body.style.overflow = "hidden";
 
-  // Commits list
+  if (versionCache) {
+    renderChangelogList(versionCache.commits);
+  } else {
+    elements.changelogList.innerHTML = '<li class="changelog-loading">Chargement…</li>';
+    fetchVersionBadge().then(() => {
+      if (versionCache) renderChangelogList(versionCache.commits);
+    });
+  }
+}
+
+function closeChangelog() {
+  elements.changelogSheet.hidden = true;
+  document.body.style.overflow = "";
+}
+
+function renderChangelogList(commits) {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const yesterday = new Date(today);
   yesterday.setDate(today.getDate() - 1);
 
-  const items = data.commits.map((c) => {
-    const date = new Date(c.date);
-    date.setHours(0, 0, 0, 0);
+  const items = commits.map((c) => {
+    const d = new Date(c.date);
+    d.setHours(0, 0, 0, 0);
     let dateLabel;
-    if (date.getTime() === today.getTime()) {
+    if (d.getTime() === today.getTime()) {
       dateLabel = "aujourd'hui";
-    } else if (date.getTime() === yesterday.getTime()) {
+    } else if (d.getTime() === yesterday.getTime()) {
       dateLabel = "hier";
     } else {
-      dateLabel = new Intl.DateTimeFormat("fr-FR", { day: "2-digit", month: "2-digit", year: "2-digit" }).format(date);
+      dateLabel = new Intl.DateTimeFormat("fr-FR", { day: "2-digit", month: "2-digit", year: "2-digit" }).format(d);
     }
-
     const li = document.createElement("li");
     li.className = `changelog-item${c.current ? " current" : ""}`;
     li.innerHTML = `
@@ -742,7 +754,6 @@ function renderChangelog(data) {
     return li;
   });
 
-  elements.changelogList.hidden = false;
   elements.changelogList.replaceChildren(...items);
 }
 

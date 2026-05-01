@@ -58,13 +58,29 @@
         </div>
         <p class="settings-hint" id="settingsHint">Par paliers de 5 L. Mis à zéro pour désactiver l'estimation.</p>
 
-        <div class="changelog-header" id="changelogHeader" hidden>
-          <span class="version-badge" id="versionBadge"></span>
-          <span class="version-sha" id="versionSha"></span>
+        <div class="settings-group">
+          <button class="settings-row version-row" type="button" id="versionBtn">
+            <div class="settings-info">
+              <div class="settings-label">Version</div>
+            </div>
+            <div class="version-row-right">
+              <span class="version-badge" id="versionBadge">—</span>
+              <span class="version-chevron">›</span>
+            </div>
+          </button>
         </div>
-
-        <ol class="changelog-list" id="changelogList" hidden aria-label="Historique des mises à jour"></ol>
       </section>
+
+    <div class="changelog-sheet" id="changelogSheet" hidden role="dialog" aria-modal="true" aria-label="Historique des mises à jour">
+      <div class="changelog-backdrop" id="changelogBackdrop"></div>
+      <div class="changelog-panel">
+        <div class="changelog-panel-header">
+          <span class="changelog-panel-title">Historique</span>
+          <button class="changelog-close" id="changelogClose" type="button" aria-label="Fermer">✕</button>
+        </div>
+        <ol class="changelog-list" id="changelogList" aria-label="Commits"></ol>
+      </div>
+    </div>
     </main>
 
     <nav class="tabbar" aria-label="Navigation">
