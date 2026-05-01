@@ -2,12 +2,14 @@
   "version": 2,
   "builds": [
     { "src": "api/stations.js", "use": "@vercel/node", "config": { "maxDuration": 30 } },
-    { "src": "api/brands.js", "use": "@vercel/node", "config": { "maxDuration": 30 } },
+    { "src": "api/brands.js",   "use": "@vercel/node", "config": { "maxDuration": 30 } },
+    { "src": "api/version.js",  "use": "@vercel/node", "config": { "maxDuration": 10 } },
     { "src": "public/**", "use": "@vercel/static" }
   ],
   "routes": [
     { "src": "/api/stations", "dest": "/api/stations.js" },
-    { "src": "/api/brands", "dest": "/api/brands.js" },
-    { "src": "/(.*)", "dest": "/public/$1" }
+    { "src": "/api/brands",   "dest": "/api/brands.js" },
+    { "src": "/api/version",  "dest": "/api/version.js" },
+    { "src": "/(.*)",          "dest": "/public/$1" }
   ]
 }

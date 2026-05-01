@@ -13,6 +13,8 @@ const SORT_QUERY_VALUES = {
   price: "prix",
   none: "aucun",
 };
+let versionCache = null;
+
 const DEFAULT_POSITION = {
   latitude: 48.8566,
   longitude: 2.3522,
@@ -54,6 +56,10 @@ const elements = {
   tankStepperRow: document.querySelector("#tankStepperRow"),
   tankEditBtn: document.querySelector("#tankEditBtn"),
   settingsHint: document.querySelector("#settingsHint"),
+  changelogHeader: document.querySelector("#changelogHeader"),
+  changelogList: document.querySelector("#changelogList"),
+  versionBadge: document.querySelector("#versionBadge"),
+  versionSha: document.querySelector("#versionSha"),
   viewButtons: document.querySelectorAll("[data-view]"),
 };
 
@@ -89,6 +95,7 @@ function bindEvents() {
   elements.settingsTabBtn.addEventListener("click", () => {
     state.view = "settings";
     render();
+    loadChangelog();
   });
 
   elements.tankDecBtn.addEventListener("click", () => {
@@ -673,6 +680,70 @@ function formatUpdateDate(value) {
     hour: "2-digit",
     minute: "2-digit",
   }).format(date);
+}
+
+async function loadChangelog() {
+  if (versionCache) {
+    renderChangelog(versionCache);
+    return;
+  }
+
+  // Show loading placeholder
+  elements.changelogHeader.hidden = true;
+  elements.changelogList.hidden = false;
+  elements.changelogList.innerHTML = '<li class="changelog-loading">Chargement de l\'historique…</li>';
+
+  try {
+    const res = await fetch("/api/version");
+    if (!res.ok) throw new Error("unavailable");
+    const data = await res.json();
+    versionCache = data;
+    renderChangelog(data);
+  } catch {
+    elements.changelogList.innerHTML = '<li class="changelog-loading">Historique indisponible</li>';
+  }
+}
+
+function renderChangelog(data) {
+  // Version badge
+  elements.versionBadge.textContent = data.version;
+  elements.versionSha.textContent = `· ${data.sha}`;
+  elements.changelogHeader.hidden = false;
+
+  // Commits list
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const yesterday = new Date(today);
+  yesterday.setDate(today.getDate() - 1);
+
+  const items = data.commits.map((c) => {
+    const date = new Date(c.date);
+    date.setHours(0, 0, 0, 0);
+    let dateLabel;
+    if (date.getTime() === today.getTime()) {
+      dateLabel = "aujourd'hui";
+    } else if (date.getTime() === yesterday.getTime()) {
+      dateLabel = "hier";
+    } else {
+      dateLabel = new Intl.DateTimeFormat("fr-FR", { day: "2-digit", month: "2-digit", year: "2-digit" }).format(date);
+    }
+
+    const li = document.createElement("li");
+    li.className = `changelog-item${c.current ? " current" : ""}`;
+    li.innerHTML = `
+      <div class="changelog-item-top">
+        <span class="changelog-dot" aria-hidden="true"></span>
+        <span class="changelog-sha">${c.sha}</span>
+        <span class="changelog-date">${dateLabel}</span>
+      </div>
+      <p class="changelog-message"></p>
+    `;
+    li.querySelector(".changelog-message").textContent = c.message;
+    return li;
+  });
+
+  elements.changelogList.hidden = false;
+  elements.changelogList.replaceChildren(...items);
 }
 
 function initPullToRefresh() {
